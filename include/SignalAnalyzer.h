@@ -1,0 +1,69 @@
+//**************************************************************************
+// file name: SignalAnalyzer.h
+//**************************************************************************
+//_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+// This class implements a signal processing block known as a signal
+// analyzer.  Given 8-bit IQ samples from an SDR, plots can be displayed
+// of the magnitude of the signal or the power spectrum of the signal.
+///_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+#ifndef __SIGNALANALYZER__
+#define __SIGNALANALYZER__
+
+#include <stdio.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <math.h>
+
+#include <X11/Xlib.h> // Every Xlib program must include this
+
+class SignalAnalyzer
+{
+  //***************************** operations **************************
+
+  public:
+
+  SignalAnalyzer(int windowWidthInPixels,
+                 int windowHeightInPixels,
+                 int logicalWindowWidth,
+                 int logicalWindowHeight);
+
+ ~SignalAnalyzer(void);
+
+  void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
+  void plotPowerSpectrum(int8_t *signalBufferPtr,uint32_t bufferLength);
+
+  private:
+
+  //*******************************************************************
+  // Utility functions.
+  //*******************************************************************
+  uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
+                                  uint32_t bufferLength);
+
+  //*******************************************************************
+  // Attributes.
+  //*******************************************************************
+  // We ulitmately map values to these pixels.
+  int windowWidthInPixels;
+  int windowHeightInPixels;
+
+  // Expected coordinate parameters.
+  int logicalWindowWidth;
+  int logicalWindowHeight;
+
+  // Used for mapping logical coordinates to pixel coordinates.
+  int xScaleFactor;
+  int yScaleFactor;
+
+  XPoint points[16384];
+
+  // This is used for signal magnitude results.
+  int16_t magnitudeBuffer[16384];
+
+  Display *displayPtr;
+  Window window;
+  GC graphicsContext;
+};
+
+#endif // __SIGNALANALYZER__
