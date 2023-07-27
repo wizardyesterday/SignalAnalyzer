@@ -10,6 +10,8 @@
 
 using namespace std;
 
+#define N (8192)
+
 /*****************************************************************************
 
   Name: XErrorCallback
@@ -76,6 +78,20 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
   int whiteColor;
   XEvent event;
 
+  // Let's force this.
+  windowWidthInPixels = 1024;
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // This block of code sets up FFTW for a size of 8192 points.  This
+  // is the result of N being defined as 8192.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  fftInputPtr = (fftw_complex *)fftw_malloc(sizeof(fftw_complex)*N);
+  fftOutputPtr = (fftw_complex *)fftw_malloc(sizeof(fftw_complex)*N);
+
+  fftPlan = fftw_plan_dft_1d(N,fftInputPtr,fftOutputPtr,
+                             FFTW_FORWARD,FFTW_ESTIMATE);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
   this->windowWidthInPixels = windowWidthInPixels;
   this->windowHeightInPixels = windowHeightInPixels;
 
@@ -89,7 +105,7 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
   blackColor = BlackPixel(displayPtr,DefaultScreen(displayPtr));
   whiteColor = WhitePixel(displayPtr,DefaultScreen(displayPtr));
 
-  // Create the window
+  // Create the window.
   window = XCreateSimpleWindow(displayPtr,
                                DefaultRootWindow(displayPtr),
                                0,
@@ -100,19 +116,19 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
                                blackColor,
                                blackColor);
 
-  // We want to get MapNotify events
+  // We want to get MapNotify events.
   XSelectInput(displayPtr,window,StructureNotifyMask);
 
-  // Create a "Graphics Context"
+  // Create a "Graphics Context".
   graphicsContext = XCreateGC(displayPtr,window,0,NULL);
 
-  // Tell the GC we draw using the white color
+  // Tell the GC we draw using the white color.
   XSetForeground(displayPtr,graphicsContext,whiteColor);
 
-  // "Map" the window (that is, make it appear on the screen)
+  // "Map" the window (that is, make it appear on the screen).
   XMapWindow(displayPtr,window);
 
-  // Wait for the MapNotify event
+  // Wait for the MapNotify event.
   for(;;)
   {
     XNextEvent(displayPtr, &event);
@@ -148,7 +164,13 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
 SignalAnalyzer::~SignalAnalyzer(void)
 {
 
+  // We're done with this display.
   XCloseDisplay(displayPtr);
+
+  // Release FFT resources.
+  fftw_destroy_plan(fftPlan);
+  fftw_free(fftInputPtr);
+  fftw_free(fftOutputPtr);
 
   return;
 
@@ -182,13 +204,21 @@ void SignalAnalyzer::plotSignalMagnitude(
   uint32_t bufferLength)
 {
   uint32_t i;
+  uint32_t j;
 
-  bufferLength = computeSignalMagnitude(signalBufferPtr, bufferLength);
+  bufferLength = computeSignalMagnitude(signalBufferPtr,bufferLength);
 
-  for (i = 0; i < bufferLength; i++)
+  // Reference the starts of the points array.
+  j = 0;
+
+  // We're fitting an 8192-point FFT to a 1024 pixel display width.
+  for (i = 0; i < bufferLength; i += 8)
   {
-    points[i].x = (short)i;
-    points[i].y = windowHeightInPixels - magnitudeBuffer[i];
+    points[j].x = (short)j;
+    points[j].y = windowHeightInPixels - magnitudeBuffer[i];
+
+    // Reference the next storage location.
+    j++;
   } // for
 
   // Erase the previous plot.
@@ -198,11 +228,8 @@ void SignalAnalyzer::plotSignalMagnitude(
   XDrawLines(displayPtr,
              window,
              graphicsContext,
-             points,bufferLength,
+             points,windowWidthInPixels,
              CoordModeOrigin);
-
-  // Display the title of the plot.
-  XDrawString(displayPtr,window,graphicsContext,700,10,"Signal Magnitude",17);
 
   // Send the request to the server
   XFlush(displayPtr);
@@ -213,12 +240,76 @@ void SignalAnalyzer::plotSignalMagnitude(
 
 /*****************************************************************************
 
-  Name: computeSignalMagnitude
+  Name: plotPowerSpectrum
 
-  Purpose: The purpose of this function is to perform a magnitude plot
+  Purpose: The purpose of this function is to perform a power spectrum plot
   of IQ data to the display.
 
-  Calling Sequence: computeSignalMagnitude(signalBufferPtr,bufferLength)
+  Calling Sequence: plotPowerSpectrum(signalBufferPtr,bufferLength)
+
+  Inputs:
+
+    signalBufferPtr - A pointer to a buffer of IQ data.  The buffer is
+    formatted with interleaved data as: I1,Q1,I2,Q2,...
+
+    bufferLength - The number of values in the signal buffer.  This
+    represents the total number of items in the buffer, rather than
+    the number of IQ sample pairs in the buffer.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::plotPowerSpectrum(
+  int8_t *signalBufferPtr,
+  uint32_t bufferLength)
+{
+  uint32_t i;
+  uint32_t j;
+
+  bufferLength = computePowerSpectrum(signalBufferPtr,bufferLength);
+
+  // Reference the starts of the points array.
+  j = 0;
+
+  // We're fitting an 8192-point FFT to a 1024 pixel display width.
+  for (i = 0; i < bufferLength; i += 8)
+  {
+    points[j].x = (short)j;
+    points[j].y = windowHeightInPixels - magnitudeBuffer[i];
+
+    // Reference the next storage location.
+    j++;
+  } // for
+
+  // Erase the previous plot.
+  XClearWindow(displayPtr,window);
+
+  // Plot the signal.
+  XDrawLines(displayPtr,
+             window,
+             graphicsContext,
+             points,windowWidthInPixels,
+             CoordModeOrigin);
+
+  // Send the request to the server
+  XFlush(displayPtr);
+
+  return;
+
+} // plotPowerSpectrum
+
+/*****************************************************************************
+
+  Name: computeSignalMagnitude
+
+  Purpose: The purpose of this function is to compute the magnitude of
+  IQ data.
+
+  Calling Sequence: numberOfSamples = computeSignalMagnitude(
+                                         signalBufferPtr,
+                                         bufferLength)
 
   Inputs:
 
@@ -269,8 +360,110 @@ uint32_t SignalAnalyzer::computeSignalMagnitude(
     magnitudeIndex++;
   } // for
 
+  // Swap the array halfs.
+
   return (bufferLength / 2);
 
 } // computeSignalMagnitude
+
+/*****************************************************************************
+
+  Name: computePowerSpectrum
+
+  Purpose: The purpose of this function is to compute the power spectrum
+  of IQ data.
+
+  Calling Sequence: computePowerSpectrum(signalBufferPtr,bufferLength)
+
+  Inputs:
+
+    signalBufferPtr - A pointer to a buffer of IQ data.  The buffer is
+    formatted with interleaved data as: I1,Q1,I2,Q2,...
+
+    bufferLength - The number of values in the signal buffer.  This
+    represents the total number of items in the buffer, rather than
+    the number of IQ sample pairs in the buffer.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+uint32_t SignalAnalyzer::computePowerSpectrum(
+  int8_t *signalBufferPtr,
+  uint32_t bufferLength)
+{
+  uint32_t i;
+  uint32_t j;
+  int16_t temp;
+  int16_t iMagnitude, qMagnitude;
+  float magnitude;
+  double powerInDb;
+
+  // Reference the beginning of the FFT buffer.
+  j = 0;
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Fill up the input array.  The second index of the
+  // array is used as follows: a value of 0 references
+  // the real component of the signal, and a value of 1
+  // references the imaginary component of the signal. 
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  for (i = 0; i < bufferLength; i += 2)
+  {
+    // Store the real value.
+    fftInputPtr[j][0] = (double)signalBufferPtr[i];
+
+    // Store the comple value.
+    fftInputPtr[j][1] = (double)signalBufferPtr[i+1];
+
+    // Reference the next storage location.
+    j += 1; 
+  } // for
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  // Compute the DFT.
+  fftw_execute(fftPlan);
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Compute the magnitude of the spectrum in decibels.
+  // Originally, I used a simple approximation for the
+  // magnitude, but the result was a lousy display of the
+  // spectrum.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  for (i = 0; i < N; i++)
+  {
+    magnitude = 
+      sqrt(fftOutputPtr[i][0]*fftOutputPtr[i][0] +
+           fftOutputPtr[i][1]*fftOutputPtr[i][1]);
+
+    // We want power in decibels.
+    powerInDb = 20*log10(magnitude);
+
+    // We're reusabing the magnitude buffer for power values.
+    magnitudeBuffer[i] = (int16_t)powerInDb; 
+  } // for
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Due to the fact that the output of the FFT has the
+  // positive frequency half from 0 to N/2 and the negative
+  // frequency half from N/2+1 to N-1, we swap the contents
+  // between the lower half and the upper half.  The result
+  // is that the center frequency (the dc bin) appears in
+  // the center of the array.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  for (i = 0; i < N/2; i++)
+  {
+    j = i + N/2;
+    temp = magnitudeBuffer[j];
+    magnitudeBuffer[j] = magnitudeBuffer[i];
+    magnitudeBuffer[i] = temp;
+  } // for
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  return (bufferLength / 2);
+
+} // computePowerSpectrum
 
 

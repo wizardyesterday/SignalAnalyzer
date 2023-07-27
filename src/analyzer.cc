@@ -15,7 +15,7 @@ int main(int argc,char **argv)
   SignalAnalyzer *analyzerPtr;
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer(8192,280);
+  analyzerPtr = new SignalAnalyzer(1024,280);
 
   // Set up for loop entry.
   done = false;
@@ -32,7 +32,8 @@ int main(int argc,char **argv)
     } // if
     else
     {
-      analyzerPtr->plotSignalMagnitude(inputBuffer,count);
+//      analyzerPtr->plotSignalMagnitude(inputBuffer,count);
+      analyzerPtr->plotPowerSpectrum(inputBuffer,count);
     } // else
   } // while
 
