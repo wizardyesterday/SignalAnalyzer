@@ -48,14 +48,7 @@ class SignalAnalyzer
   int windowWidthInPixels;
   int windowHeightInPixels;
 
-  // Expected coordinate parameters.
-  int logicalWindowWidth;
-  int logicalWindowHeight;
-
-  // Used for mapping logical coordinates to pixel coordinates.
-  int xScaleFactor;
-  int yScaleFactor;
-
+  // This is used for plotting of signals.
   XPoint points[16384];
 
   // This is used for signal magnitude results.

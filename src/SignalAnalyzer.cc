@@ -80,8 +80,6 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
 
   this->windowWidthInPixels = windowWidthInPixels;
   this->windowHeightInPixels = windowHeightInPixels;
-  this->logicalWindowWidth = logicalWindowWidth;
-  this->logicalWindowHeight = logicalWindowHeight;
 
   // Register the X error handler.
   XSetErrorHandler(XErrorCallback);
