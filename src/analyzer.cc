@@ -15,7 +15,7 @@ int main(int argc,char **argv)
   SignalAnalyzer *analyzerPtr;
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer(16384,280,0,0);
+  analyzerPtr = new SignalAnalyzer(8192,280);
 
   // Set up for loop entry.
   done = false;

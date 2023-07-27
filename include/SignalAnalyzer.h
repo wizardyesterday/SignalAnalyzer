@@ -24,9 +24,7 @@ class SignalAnalyzer
   public:
 
   SignalAnalyzer(int windowWidthInPixels,
-                 int windowHeightInPixels,
-                 int logicalWindowWidth,
-                 int logicalWindowHeight);
+                 int windowHeightInPixels);
 
  ~SignalAnalyzer(void);
 

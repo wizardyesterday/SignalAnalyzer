@@ -70,9 +70,7 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
 
 *****************************************************************************/
 SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
-                               int windowHeightInPixels,
-                               int logicalWindowWidth,
-                               int logicalWindowHeight)
+                               int windowHeightInPixels)
 {
   int blackColor;
   int whiteColor;
