@@ -44,24 +44,25 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
 
   return (0);
 
-} // myXErrorCallback
+} // XErrorCallback
 
 /*****************************************************************************
 
   Name: SignalAnalyzer
 
-  Purpose: The purpose of this function is to serve as the contructor for
+  Purpose: The purpose of this function is to serve as the constructor for
   an instance of an SignalAnalyzer.
 
   Calling Sequence: SignalAnalyzer(windowWidthInPixels,
-                                   windowHeightInPixels,
-                                   logicalWindowWidth,
-                                   logicalWindowHeight)
-
+                                   windowHeightInPixels)
+ 
   Inputs:
 
-    pcmCallbackPtr - A pointer to a callback function that is to process
-    demodulated data.
+    windowWidthInPixels - The number of pixels in the horizontal
+    direction.
+
+    windowHeightInPixels - The number of pixels in the vertical
+    direction.
 
  Outputs:
 
@@ -88,6 +89,7 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
   // Connect to the X server.
   displayPtr = XOpenDisplay(NULL);
 
+  // Retrieve these two colors.
   blackColor = BlackPixel(displayPtr,DefaultScreen(displayPtr));
   whiteColor = WhitePixel(displayPtr,DefaultScreen(displayPtr));
 
