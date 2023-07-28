@@ -147,38 +147,6 @@ SignalAnalyzer::~SignalAnalyzer(void)
 *****************************************************************************/
 void SignalAnalyzer::initializeFftw(void)
 {
-  uint32_t i;
-
-#if 0
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // This block of code sets up the mapping array so that I can store
-  // FFT results as driven by this table.  Otherwise, all of the
-  // signal power data has to be permuted after retrieving FFT results.
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Paint the array.
-  for (i = 0; i < N/2; i++)
-  {
-    fftShiftTable[i] = 0xffff;
-  } // for
-
-  // Set up the lower portion of the array.
-  for (i = 0; i <= N/2 - 1; i++)
-  {
-    fftShiftTable[i] = i + N/2 + 1;
-  } // for
-
-  // Set up the upper portion of the array.
-  for (i = N/2; i < N; i++)
-  {
-    fftShiftTable[i] = i - N/2;
-  } // for
-
-  for (i = 0; i < N; i++)
-  {
-    fprintf(stderr,"%u  %u\n",i,fftShiftTable[i]);
-  } // for
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-#endif
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // This block of code sets up FFTW for a size of 8192 points.  This

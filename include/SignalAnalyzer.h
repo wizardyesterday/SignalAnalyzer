@@ -57,9 +57,6 @@ class SignalAnalyzer
   // This is used for plotting of signals.
   XPoint points[16384];
 
-  // This is used for swapping the upper and lower halves of an array.
-  uint32_t fftShiftTable[8192];
-
   // This is used for signal magnitude results.
   int16_t magnitudeBuffer[16384];
 
