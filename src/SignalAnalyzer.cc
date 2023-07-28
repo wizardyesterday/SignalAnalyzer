@@ -74,12 +74,79 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
 SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
                                int windowHeightInPixels)
 {
-  int blackColor;
-  int whiteColor;
-  XEvent event;
+  uint32_t i;
 
-  // Let's force this.
-  windowWidthInPixels = 1024;
+  // Retrieve for later use.
+  this->windowWidthInPixels = windowWidthInPixels;
+  this->windowHeightInPixels = windowHeightInPixels;
+
+  if (windowWidthInPixels != 1024)
+  {
+    // Let's force this.
+    windowWidthInPixels = 1024;
+  } // if
+
+  initializeFftw();
+
+  initializeX();
+
+  return;
+
+} // SignalAnalyzer
+
+/*****************************************************************************
+
+  Name: ~SignalAnalyzer
+
+  Purpose: The purpose of this function is to serve as the destructor for
+  an instance of an SignalAnalyzer.
+
+  Calling Sequence: ~SignalAnalyzer()
+
+  Inputs:
+
+    None.
+
+  Outputs:
+
+    None.
+
+*****************************************************************************/
+SignalAnalyzer::~SignalAnalyzer(void)
+{
+
+  // We're done with this display.
+  XCloseDisplay(displayPtr);
+
+  // Release FFT resources.
+  fftw_destroy_plan(fftPlan);
+  fftw_free(fftInputPtr);
+  fftw_free(fftOutputPtr);
+
+  return;
+
+} // ~SignalAnalyzer
+
+/*****************************************************************************
+
+  Name: initializeFftw
+
+  Purpose: The purpose of this function is to initialize FFTW so that
+  FFT's can be performed.
+
+  Calling Sequence: initializeFftw()
+
+  Inputs:
+
+    None.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::initializeFftw(void)
+{
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // This block of code sets up FFTW for a size of 8192 points.  This
@@ -92,9 +159,37 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
                              FFTW_FORWARD,FFTW_ESTIMATE);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
-  this->windowWidthInPixels = windowWidthInPixels;
-  this->windowHeightInPixels = windowHeightInPixels;
+  return;
 
+} // initializeFftw
+
+/*****************************************************************************
+
+  Name: initializeX
+
+  Purpose: The purpose of this function is to perform all of the
+  initialization that is related to launching an X application.
+
+  Calling Sequence: initializeX()
+
+  Inputs:
+
+    None.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::initializeX(void)
+{
+  int blackColor;
+  int whiteColor;
+  XEvent event;
+
+ //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Setup X.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Register the X error handler.
   XSetErrorHandler(XErrorCallback);
 
@@ -138,43 +233,11 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
       break;
     } // if);
   } // for
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   return;
 
-} // SignalAnalyzer
-
-/*****************************************************************************
-
-  Name: ~SignalAnalyzer
-
-  Purpose: The purpose of this function is to serve as the destructor for
-  an instance of an SignalAnalyzer.
-
-  Calling Sequence: ~SignalAnalyzer()
-
-  Inputs:
-
-    None.
-
-  Outputs:
-
-    None.
-
-*****************************************************************************/
-SignalAnalyzer::~SignalAnalyzer(void)
-{
-
-  // We're done with this display.
-  XCloseDisplay(displayPtr);
-
-  // Release FFT resources.
-  fftw_destroy_plan(fftPlan);
-  fftw_free(fftInputPtr);
-  fftw_free(fftOutputPtr);
-
-  return;
-
-} // ~SignalAnalyzer
+} // initializeX
 
 /*****************************************************************************
 

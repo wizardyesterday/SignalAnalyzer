@@ -38,6 +38,9 @@ class SignalAnalyzer
   //*******************************************************************
   // Utility functions.
   //*******************************************************************
+  void initializeFftw(void);
+  void initializeX(void);
+
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
                                   uint32_t bufferLength);
 
