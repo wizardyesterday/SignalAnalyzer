@@ -397,8 +397,9 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
   uint32_t j;
   int16_t temp;
   int16_t iMagnitude, qMagnitude;
-  float magnitude;
+  double power;
   double powerInDb;
+  double iK, qK;
 
   // Reference the beginning of the FFT buffer.
   j = 0;
@@ -433,12 +434,15 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   for (i = 0; i < N; i++)
   {
-    magnitude = 
-      sqrt(fftOutputPtr[i][0]*fftOutputPtr[i][0] +
-           fftOutputPtr[i][1]*fftOutputPtr[i][1]);
+    // Retrive the in-phase and quadrature parts.
+    iK = fftOutputPtr[i][0];
+    qK = fftOutputPtr[i][1];
+
+    // Compute signal power, |I + jQ|.
+    power = (iK * iK) + (qK * qK);
 
     // We want power in decibels.
-    powerInDb = 20*log10(magnitude);
+    powerInDb = 10*log10(power);
 
     // We're reusabing the magnitude buffer for power values.
     magnitudeBuffer[i] = (int16_t)powerInDb; 
