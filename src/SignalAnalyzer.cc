@@ -86,8 +86,10 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
     windowWidthInPixels = 1024;
   } // if
 
+  // Set up the FFT stuff.
   initializeFftw();
 
+  // Do all the cool stuff for X.
   initializeX();
 
   return;
