@@ -351,7 +351,7 @@ void SignalAnalyzer::plotSignalMagnitude(
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "2 ms/div",8);
+              "2ms/div",7);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
@@ -430,7 +430,7 @@ void SignalAnalyzer::plotPowerSpectrum(
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "16 kHz/div",10);
+              "16kHz/div",9);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
