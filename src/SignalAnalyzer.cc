@@ -149,6 +149,14 @@ SignalAnalyzer::~SignalAnalyzer(void)
 *****************************************************************************/
 void SignalAnalyzer::initializeFftw(void)
 {
+  uint32_t i;
+
+  // Construct the permuted indices.
+  for (i = 0; i < N/2; i++)
+  {
+    fftShiftTable[i] = i + N/2;
+    fftShiftTable[i + N/2] = i;
+  } // for
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // This block of code sets up FFTW for a size of 8192 points.  This
@@ -509,25 +517,19 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     // We want power in decibels.
     powerInDb = 10*log10(power);
 
-    // We're reusabing the magnitude buffer for power values.
-    magnitudeBuffer[i] = (int16_t)powerInDb; 
-  } // for
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+    //--------------------------------------------
+    // The fftShiftTable[] allows us to store
+    // the FFT output values such that the
+    // center frequency bin is in the center
+    // of the output array.  This results in a
+    // display that looks like that of a spectrum
+    // analyzer.
+    //--------------------------------------------
+    j = fftShiftTable[i];
+    //--------------------------------------------
 
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Due to the fact that the output of the FFT has the
-  // positive frequency half from 0 to N/2 and the negative
-  // frequency half from N/2+1 to N-1, we swap the contents
-  // between the lower half and the upper half.  The result
-  // is that the center frequency (the dc bin) appears in
-  // the center of the array.
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  for (i = 0; i < N/2; i++)
-  {
-    j = i + N/2;
-    temp = magnitudeBuffer[j];
-    magnitudeBuffer[j] = magnitudeBuffer[i];
-    magnitudeBuffer[i] = temp;
+    // We're reusabing the magnitude buffer for power values.
+    magnitudeBuffer[j] = (int16_t)powerInDb; 
   } // for
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 

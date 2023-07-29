@@ -60,6 +60,9 @@ class SignalAnalyzer
   // This is used for signal magnitude results.
   int16_t magnitudeBuffer[16384];
 
+  // This will be used to swap the upper and lower halves of an array.
+  uint32_t fftShiftTable[8192];
+
   // FFTW3 support.
   fftw_complex *fftInputPtr;
   fftw_complex *fftOutputPtr;
