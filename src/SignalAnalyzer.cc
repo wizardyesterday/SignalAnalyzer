@@ -273,16 +273,39 @@ void SignalAnalyzer::drawGridlines(void)
   for (i = 1; i < 16; i++)
   {
     XDrawLine(displayPtr,
-    window,
-    graphicsContext,i*64,0,i*64,windowHeightInPixels);
+              window,
+              graphicsContext,
+              i*64,0,i*64,windowHeightInPixels);
   } // for
+
+  // Nicely mark the horizontal center.
+    XDrawLine(displayPtr,
+    window,
+    graphicsContext,
+    8*64-1,0,8*64-1,5);
+
+   XDrawLine(displayPtr,
+    window,
+    graphicsContext,
+    8*64+1,0,8*64+1,5);
+
+    XDrawLine(displayPtr,
+    window,
+    graphicsContext,
+    8*64-1,windowHeightInPixels-5,8*64-1,windowHeightInPixels);
+
+   XDrawLine(displayPtr,
+    window,
+    graphicsContext,
+    8*64+1,windowHeightInPixels-5,8*64+1,windowHeightInPixels);
 
   // Draw horozontal lines.
   for (i = 1; i < 4; i++)
   {
     XDrawLine(displayPtr,
     window,
-    graphicsContext,i,i*64,windowWidthInPixels,i*64);
+    graphicsContext,
+  i,i*64,windowWidthInPixels,i*64);
   } // for
 
   return;
