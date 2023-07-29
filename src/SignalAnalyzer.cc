@@ -80,11 +80,9 @@ SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
   this->windowWidthInPixels = windowWidthInPixels;
   this->windowHeightInPixels = windowHeightInPixels;
 
-  if (windowWidthInPixels != 1024)
-  {
-    // Let's force this.
-    windowWidthInPixels = 1024;
-  } // if
+  // Let's force this.
+  windowWidthInPixels = 1024;
+  windowHeightInPixels = 256;
 
   // Set up the FFT stuff.
   initializeFftw();
@@ -251,6 +249,48 @@ void SignalAnalyzer::initializeX(void)
 
 /*****************************************************************************
 
+  Name: drawGridlines
+
+  Purpose: The purpose of this function is to draw a grid over the
+  analyzer display.
+
+  Calling Sequence: drawGridlines()
+
+  Inputs:
+
+    None.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::drawGridlines(void)
+{
+  uint32_t i;
+
+  // Draw vertical lines.
+  for (i = 1; i < 16; i++)
+  {
+    XDrawLine(displayPtr,
+    window,
+    graphicsContext,i*64,0,i*64,windowHeightInPixels);
+  } // for
+
+  // Draw horozontal lines.
+  for (i = 1; i < 4; i++)
+  {
+    XDrawLine(displayPtr,
+    window,
+    graphicsContext,i,i*64,windowWidthInPixels,i*64);
+  } // for
+
+  return;
+
+} // drawGridLines
+
+/*****************************************************************************
+
   Name: plotSignalMagnitude
 
   Purpose: The purpose of this function is to perform a magnitude plot
@@ -296,6 +336,23 @@ void SignalAnalyzer::plotSignalMagnitude(
 
   // Erase the previous plot.
   XClearWindow(displayPtr,window);
+
+  // Make this display pretty.
+  drawGridlines();
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Annotate the display.  This is really too
+  // sensitive to fonts.  I'll think of something
+  // later.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  XDrawString(displayPtr,window,graphicsContext,
+              768,20,
+              "Sweep Time: 32ms",16);
+
+  XDrawString(displayPtr,window,graphicsContext,
+              768,35,
+              "2 ms/div",8);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
   XDrawLines(displayPtr,
@@ -358,6 +415,23 @@ void SignalAnalyzer::plotPowerSpectrum(
 
   // Erase the previous plot.
   XClearWindow(displayPtr,window);
+
+  // Make this display pretty.
+  drawGridlines();
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Annotate the display.  This is really too
+  // sensitive to fonts.  I'll think of something
+  // later.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  XDrawString(displayPtr,window,graphicsContext,
+              768,20,
+              "Frequency Span: 256kHz",22);
+
+  XDrawString(displayPtr,window,graphicsContext,
+              768,35,
+              "16 kHz/div",10);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
   XDrawLines(displayPtr,

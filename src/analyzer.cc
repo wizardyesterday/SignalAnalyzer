@@ -142,7 +142,7 @@ int main(int argc,char **argv)
   } // if
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer(1024,280);
+  analyzerPtr = new SignalAnalyzer(1024,256);
 
   // Set up for loop entry.
   done = false;

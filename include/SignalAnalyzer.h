@@ -30,6 +30,7 @@ class SignalAnalyzer
 
  ~SignalAnalyzer(void);
 
+  void drawGridlines(void);
   void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
   void plotPowerSpectrum(int8_t *signalBufferPtr,uint32_t bufferLength);
 
