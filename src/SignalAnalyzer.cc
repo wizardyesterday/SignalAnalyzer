@@ -206,8 +206,8 @@ void SignalAnalyzer::initializeX(void)
   // Initialize colors.  These colors will throughout
   // the application.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Background is slate blue.
-  scopeBackgroundColor = convertRgbTo16Bit(106,90,205);
+  // Background is midnight blue.
+  scopeBackgroundColor = convertRgbTo16Bit(25,25,112);
 
   // Grid is yellow.
   scopeGridColor = convertRgbTo16Bit(255,255,0);
