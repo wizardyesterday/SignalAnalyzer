@@ -43,6 +43,7 @@ class SignalAnalyzer
   //*******************************************************************
   void initializeFftw(void);
   void initializeX(void);
+  uint16_t convertRgbTo16Bit(uint8_t red,uint8_t green,uint8_t blue);
 
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
                                   uint32_t bufferLength);
@@ -53,7 +54,11 @@ class SignalAnalyzer
   //*******************************************************************
   // Attributes.
   //*******************************************************************
+  // Display support.
   DisplayType displayType;
+  uint16_t scopeBackgroundColor;
+  uint16_t scopeGridColor;
+  uint16_t scopeSignalColor;
 
   // We ulitmately map values to these pixels.
   int windowWidthInPixels;

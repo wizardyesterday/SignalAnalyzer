@@ -180,6 +180,11 @@ void SignalAnalyzer::initializeFftw(void)
   Purpose: The purpose of this function is to perform all of the
   initialization that is related to launching an X application.
 
+  Note: For a 16-bit display, the partitioning of the color values
+  are as follows (with r = red, g = green, blue = blue):
+
+  r[4:0], g[5:0], blue[4:0] = rrrrr gggggg bbbbb = 16 bits
+
   Calling Sequence: initializeX()
 
   Inputs:
@@ -197,7 +202,23 @@ void SignalAnalyzer::initializeX(void)
   int whiteColor;
   XEvent event;
 
- //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Initialize colors.  These colors will throughout
+  // the application.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Background is slate blue.
+  scopeBackgroundColor = convertRgbTo16Bit(106,90,205);
+
+  // Grid is yellow.
+  scopeGridColor = convertRgbTo16Bit(255,255,0);
+
+  // Signal is green.
+  scopeSignalColor = convertRgbTo16Bit(0,255,0);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Setup X.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Register the X error handler.
@@ -219,7 +240,7 @@ void SignalAnalyzer::initializeX(void)
                                windowHeightInPixels,
                                0,
                                blackColor,
-                               0x0000f8);
+                               scopeBackgroundColor);
 
   // We want to get MapNotify events.
   XSelectInput(displayPtr,window,StructureNotifyMask);
@@ -276,9 +297,64 @@ void SignalAnalyzer::initializeX(void)
 
 /*****************************************************************************
 
+  Name: convertRgbTo16Bit
+
+  Purpose: The purpose of this function is to convert an rgb triple into
+  a value that is suitable for 16-bit displays.
+
+  Note: For a 16-bit display, the partitioning of the color values
+  are as follows (with r = red, g = green, blue = blue):
+
+  r[4:0], g[5:0], blue[4:0] = rrrrr gggggg bbbbb = 16 bits
+
+  Calling Sequence: value = convertRgbTo16Bit(red,green,blue)
+
+  Inputs:
+
+    red - The red contribution [0,255].
+
+    green - The green contribution [0,255].
+
+    blue - The blue contribution [0,255].
+
+ Outputs:
+
+    value = The 16-bit representation of the rgb value.
+
+*****************************************************************************/
+uint16_t SignalAnalyzer::convertRgbTo16Bit(
+  uint8_t red,
+  uint8_t green,
+  uint8_t blue)
+{
+  uint16_t value;
+  uint16_t r, g, b;
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Form the quantized values.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Quantize to 5 bits.
+  r = red / 8;
+
+  // Quantize to 6 bits.
+  g = green / 4;
+
+  // Quantize to 5 bits.
+  b = blue / 8;
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  // Construct the 16-bit value.
+  value = (r << 11) | (g << 5) | b;
+  
+  return (value);
+
+} // convertRgbTo16Bit
+
+/*****************************************************************************
+
   Name: drawGridlines
 
-  Purpose: The purpose of this function is to draw a grid over the
+  Purpose: The purpose of this function is to draw a grid on the
   analyzer display.
 
   Calling Sequence: drawGridlines()
@@ -296,7 +372,8 @@ void SignalAnalyzer::drawGridlines(void)
 {
   uint32_t i;
 
-  XSetForeground(displayPtr,graphicsContext,0xffff00);
+  // Set the grid color.
+  XSetForeground(displayPtr,graphicsContext,scopeGridColor);
 
   // Draw vertical lines.
   for (i = 1; i < 16; i++)
@@ -409,8 +486,8 @@ void SignalAnalyzer::plotSignalMagnitude(
   // Make this display pretty.
   drawGridlines();
 
-  // We want the waveform to be white.
-  XSetForeground(displayPtr,graphicsContext,0xffffff);
+  // Set the signal color.
+  XSetForeground(displayPtr,graphicsContext,scopeSignalColor);
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Annotate the display.  This is really too
@@ -491,8 +568,8 @@ void SignalAnalyzer::plotPowerSpectrum(
   // Make this display pretty.
   drawGridlines();
 
-  // We want the waveform to be white.
-  XSetForeground(displayPtr,graphicsContext,0xffffff);
+  // Set the signal color.
+  XSetForeground(displayPtr,graphicsContext,scopeSignalColor);
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Annotate the display.  This is really too
@@ -677,7 +754,7 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     j = fftShiftTable[i];
     //--------------------------------------------
 
-    // We're reusabing the magnitude buffer for power values.
+    // We're reusing the magnitude buffer for power values.
     magnitudeBuffer[j] = (int16_t)powerInDb; 
   } // for
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
