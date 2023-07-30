@@ -296,6 +296,8 @@ void SignalAnalyzer::drawGridlines(void)
 {
   uint32_t i;
 
+  XSetForeground(displayPtr,graphicsContext,0xffff00);
+
   // Draw vertical lines.
   for (i = 1; i < 16; i++)
   {
@@ -407,6 +409,9 @@ void SignalAnalyzer::plotSignalMagnitude(
   // Make this display pretty.
   drawGridlines();
 
+  // We want the waveform to be white.
+  XSetForeground(displayPtr,graphicsContext,0xffffff);
+
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Annotate the display.  This is really too
   // sensitive to fonts.  I'll think of something
@@ -485,6 +490,9 @@ void SignalAnalyzer::plotPowerSpectrum(
 
   // Make this display pretty.
   drawGridlines();
+
+  // We want the waveform to be white.
+  XSetForeground(displayPtr,graphicsContext,0xffffff);
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Annotate the display.  This is really too
