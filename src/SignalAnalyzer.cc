@@ -219,7 +219,7 @@ void SignalAnalyzer::initializeX(void)
                                windowHeightInPixels,
                                0,
                                blackColor,
-                               blackColor);
+                               0x0000f8);
 
   // We want to get MapNotify events.
   XSelectInput(displayPtr,window,StructureNotifyMask);
@@ -266,6 +266,10 @@ void SignalAnalyzer::initializeX(void)
   } // for
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
+
+  // Send the request to the server
+  XFlush(displayPtr);
+ 
   return;
 
 } // initializeX
@@ -298,39 +302,56 @@ void SignalAnalyzer::drawGridlines(void)
     XDrawLine(displayPtr,
               window,
               graphicsContext,
-              i*64,0,i*64,windowHeightInPixels);
+              i*64,0,i*64,
+              windowHeightInPixels);
   } // for
-
-  // Nicely mark the horizontal center.
-    XDrawLine(displayPtr,
-    window,
-    graphicsContext,
-    8*64-1,0,8*64-1,5);
-
-   XDrawLine(displayPtr,
-    window,
-    graphicsContext,
-    8*64+1,0,8*64+1,5);
-
-    XDrawLine(displayPtr,
-    window,
-    graphicsContext,
-    8*64-1,windowHeightInPixels-5,8*64-1,windowHeightInPixels);
-
-   XDrawLine(displayPtr,
-    window,
-    graphicsContext,
-    8*64+1,windowHeightInPixels-5,8*64+1,windowHeightInPixels);
 
   // Draw horozontal lines.
   for (i = 1; i < 4; i++)
   {
     XDrawLine(displayPtr,
-    window,
-    graphicsContext,
-  i,i*64,windowWidthInPixels,i*64);
+              window,
+              graphicsContext,
+              i,i*64,windowWidthInPixels,i*64);
   } // for
 
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Nicely mark the horizontal center.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  //---------------------------------
+  // Place marks on upper part of
+  // screen.
+  //---------------------------------
+  XDrawLine(displayPtr,
+            window,
+            graphicsContext,
+            8*64-1,0,8*64-1,5);
+
+  XDrawLine(displayPtr,
+            window,
+            graphicsContext,
+            8*64+1,0,8*64+1,5);
+
+  //---------------------------------
+  // Place marks on lower part of
+  // screen.
+  //---------------------------------
+  XDrawLine(displayPtr,
+            window,
+            graphicsContext,
+            8*64-1,windowHeightInPixels-5,8*64-1,windowHeightInPixels);
+
+  XDrawLine(displayPtr,
+            window,
+            graphicsContext,
+            8*64+1,windowHeightInPixels-5,8*64+1,windowHeightInPixels);
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  // Send the request to the server
+  XFlush(displayPtr);
+ 
   return;
 
 } // drawGridLines

@@ -17,7 +17,7 @@
 
 #include <fftw3.h>
 
-#include <X11/Xlib.h> // Every Xlib program must include this
+#include <X11/Xlib.h>
 
 enum DisplayType {SignalMagnitude=1, PowerSpectrum};
 
