@@ -19,13 +19,15 @@
 
 #include <X11/Xlib.h> // Every Xlib program must include this
 
+enum DisplayType {SignalMagnitude=1, PowerSpectrum};
+
 class SignalAnalyzer
 {
   //***************************** operations **************************
 
   public:
 
-  SignalAnalyzer(int windowWidthInPixels,
+  SignalAnalyzer(DisplayType displayType,int windowWidthInPixels,
                  int windowHeightInPixels);
 
  ~SignalAnalyzer(void);
@@ -51,6 +53,8 @@ class SignalAnalyzer
   //*******************************************************************
   // Attributes.
   //*******************************************************************
+  DisplayType displayType;
+
   // We ulitmately map values to these pixels.
   int windowWidthInPixels;
   int windowHeightInPixels;

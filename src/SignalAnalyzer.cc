@@ -71,12 +71,14 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
     None.
 
 *****************************************************************************/
-SignalAnalyzer::SignalAnalyzer(int windowWidthInPixels,
+SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
+                               int windowWidthInPixels,
                                int windowHeightInPixels)
 {
   uint32_t i;
 
   // Retrieve for later use.
+  this->displayType = displayType;
   this->windowWidthInPixels = windowWidthInPixels;
   this->windowHeightInPixels = windowHeightInPixels;
 
@@ -227,6 +229,27 @@ void SignalAnalyzer::initializeX(void)
 
   // Tell the GC we draw using the white color.
   XSetForeground(displayPtr,graphicsContext,whiteColor);
+
+  switch (displayType)			
+  {
+    case SignalMagnitude:
+    {
+      XStoreName(displayPtr,window,"Oscilloscope");
+      break;
+    } // case
+
+    case PowerSpectrum:
+    {
+      XStoreName(displayPtr,window,"Spectrum Analyzer");
+      break;
+    } // case
+
+    default:
+    {
+      XStoreName(displayPtr,window,"Signal Analyzer");
+      break;
+    } // case
+  } // switch
 
   // "Map" the window (that is, make it appear on the screen).
   XMapWindow(displayPtr,window);
