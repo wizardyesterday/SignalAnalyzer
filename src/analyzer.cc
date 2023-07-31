@@ -148,7 +148,7 @@ int main(int argc,char **argv)
   while (!done)
   {
     // Read a 32 millisecond block of input samples.
-    count = fread(inputBuffer,sizeof(int8_t),16384,stdin);
+    count = fread(inputBuffer,sizeof(int8_t),(2 * N),stdin);
 
     if (count == 0)
     {

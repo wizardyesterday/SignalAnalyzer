@@ -10,8 +10,6 @@
 
 using namespace std;
 
-#define N (8192)
-
 /*****************************************************************************
 
   Name: XErrorCallback
@@ -81,6 +79,12 @@ SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
   this->displayType = displayType;
   this->windowWidthInPixels = windowWidthInPixels;
   this->windowHeightInPixels = windowHeightInPixels;
+
+  // Construct the Hanning window array.
+  for (i = 0; i < N; i++)
+  {
+    hanningWindow[i] = 0.5 - 0.5 * cos((2 * M_PI * i)/N);
+  } // for
 
   // Let's force this.
   windowWidthInPixels = 1024;
@@ -707,15 +711,17 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
   // Fill up the input array.  The second index of the
   // array is used as follows: a value of 0 references
   // the real component of the signal, and a value of 1
-  // references the imaginary component of the signal. 
+  // references the imaginary component of the signal.
+  // Each component is windowed so that sidelobes are
+  // reduced.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   for (i = 0; i < bufferLength; i += 2)
   {
     // Store the real value.
-    fftInputPtr[j][0] = (double)signalBufferPtr[i];
+    fftInputPtr[j][0] = (double)signalBufferPtr[i] * hanningWindow[j];
 
     // Store the comple value.
-    fftInputPtr[j][1] = (double)signalBufferPtr[i+1];
+    fftInputPtr[j][1] = (double)signalBufferPtr[i+1] * hanningWindow[j];
 
     // Reference the next storage location.
     j += 1; 

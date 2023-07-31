@@ -19,6 +19,9 @@
 
 #include <X11/Xlib.h>
 
+// This is the FFT size.
+#define N (8192)
+
 enum DisplayType {SignalMagnitude=1, PowerSpectrum};
 
 class SignalAnalyzer
@@ -65,13 +68,16 @@ class SignalAnalyzer
   int windowHeightInPixels;
 
   // This is used for plotting of signals.
-  XPoint points[16384];
+  XPoint points[1024];
 
   // This is used for signal magnitude results.
-  int16_t magnitudeBuffer[16384];
+  int16_t magnitudeBuffer[N];
 
   // This will be used to swap the upper and lower halves of an array.
-  uint32_t fftShiftTable[8192];
+  uint32_t fftShiftTable[N];
+
+  // This will be used for windowing data before the FFT.
+  double hanningWindow[N];
 
   // FFTW3 support.
   fftw_complex *fftInputPtr;
