@@ -248,7 +248,7 @@ void SignalAnalyzer::initializeX(void)
   // Create a "Graphics Context".
   graphicsContext = XCreateGC(displayPtr,window,0,NULL);
 
-  // Tell the GC we draw using the white color.
+  // First-time foreground is whit.
   XSetForeground(displayPtr,graphicsContext,whiteColor);
 
   switch (displayType)			
@@ -317,7 +317,7 @@ void SignalAnalyzer::initializeX(void)
 
     blue - The blue contribution [0,255].
 
- Outputs:
+  Outputs:
 
     value = The 16-bit representation of the rgb value.
 
@@ -500,7 +500,7 @@ void SignalAnalyzer::plotSignalMagnitude(
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "2ms/div",7);
+              "4ms/div",7);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
