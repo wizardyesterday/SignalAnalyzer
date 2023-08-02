@@ -16,4 +16,27 @@ learning curve.
 
 Chris G. 07/26/2023
 
+------------------------------------------------------------------------
+07/01/2023
+------------------------------------------------------------------------
+The system has been completed, and the diaplay is cleaned up.
+
+Lessons learned:
+
+1. The log10() function is very expensive in terms of CPU cycles (no
+surprise).
+
+2. The Scilab fftshift() output maade it easy to set up a table that
+allowed me to store FFT output magnitude in the magnitude array such
+that the upper and lower halves of the array are swapped.
+
+3. When you're running X in 16-bit display mode, make sure you
+map rgb colors to MSB: red[4:0] green[5:0], blue[4:0]: LSB.  Once
+I write an rgbYo16Bit() function (and used it), display colors
+rendered properly.  Before I did this, colors were all wrong.
+
+4. XDrawLine() (for drawing grids) and XDrawLines() (for plotting signals)
+are your friends.  So is XDrawString() for placing text on the display.
+I'm not sure how different fonts on different systems will mess things up.
+
 
