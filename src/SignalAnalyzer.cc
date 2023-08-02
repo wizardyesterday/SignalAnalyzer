@@ -504,7 +504,7 @@ void SignalAnalyzer::plotSignalMagnitude(
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "4ms/div",7);
+              "2ms/div",7);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
