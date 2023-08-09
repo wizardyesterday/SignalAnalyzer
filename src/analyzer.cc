@@ -11,7 +11,7 @@
 //
 // To run this program type,
 // 
-//     ./analyzer > -d displaytype -D
+//     ./analyzer > -d <displaytype> -r <sampleRate> -D
 //
 // where,
 //
@@ -22,7 +22,9 @@
 //    The D flag indicates that raw IQ data should be dumped to stdout.
 //    This allows the data to be piped to another program.  Here's how
 //    to do this (for example, using a spectral display):
-//    ./analyzer -d 2 > >(other program to accept IQ data)
+//    ./analyzer -d 2 > >(other program to accept IQ data).
+//
+//    sampleRate - The sample rate of the IQ data in S/s.
 ///*************************************************************************
 #include <stdio.h>
 #include <stdint.h>
@@ -37,6 +39,7 @@
 struct MyParameters
 {
   int *displayTypePtr;
+  float *sampleRatePtr;
   bool *iqDumpPtr;
 };
 
@@ -76,6 +79,9 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   // Default oscilloscope display.
   *parameters.displayTypePtr = SignalMagnitude;
 
+  // Default to 256000S/s.
+  *parameters.sampleRatePtr = 256000;
+
   // Default to not dumping IQ data.
   *parameters.iqDumpPtr = false;
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -89,13 +95,19 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   while (!done)
   {
     // Retrieve the next option.
-    opt = getopt(argc,argv,"d:-Dh");
+    opt = getopt(argc,argv,"d:-r:-Dh");
 
     switch (opt)
     {
       case 'd':
       {
         *parameters.displayTypePtr = atoi(optarg);
+        break;
+      } // case
+
+      case 'r':
+      {
+        *parameters.sampleRatePtr = atof(optarg);
         break;
       } // case
 
@@ -108,8 +120,8 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
       case 'h':
       {
         // Display usage.
-        fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum] "
-                " -D (dump raw IQ)\n");
+        fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum]\n"
+                "-r samplerate (S/s)\n -D (dump raw IQ)\n");
 
         // Indicate that program must be exited.
         exitProgram = true;
@@ -142,11 +154,13 @@ int main(int argc,char **argv)
   int8_t inputBuffer[16384];
   SignalAnalyzer *analyzerPtr;
   int displayType;
+  float sampleRate;
   bool iqDump;
   struct MyParameters parameters;
 
   // Set up for parameter transmission.
   parameters.displayTypePtr = &displayType;
+  parameters.sampleRatePtr = &sampleRate;
   parameters.iqDumpPtr = &iqDump;
 
   // Retrieve the system parameters.
@@ -159,17 +173,14 @@ int main(int argc,char **argv)
   } // if
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,
-                                   1024,
-                                   256,
-                                   256000);
+  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,sampleRate);
 
   // Set up for loop entry.
   done = false;
 
   while (!done)
   {
-    // Read a 32 millisecond block of input samples.
+    // Read a block of input samples (2 * complex FFT length).
     count = fread(inputBuffer,sizeof(int8_t),(2 * N),stdin);
 
     if (count == 0)

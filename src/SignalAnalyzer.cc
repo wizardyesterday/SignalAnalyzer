@@ -54,17 +54,9 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
   Purpose: The purpose of this function is to serve as the constructor for
   an instance of an SignalAnalyzer.
 
-  Calling Sequence: SignalAnalyzer(windowWidthInPixels,
-                                   windowHeightInPixels,
-                                   sampleRate)
+  Calling Sequence: SignalAnalyzer(sampleRate)
  
   Inputs:
-
-    windowWidthInPixels - The number of pixels in the horizontal
-    direction.
-
-    windowHeightInPixels - The number of pixels in the vertical
-    direction.
 
     sampleRate - The sample rate of incoming IQ data in units of S/s.
 
@@ -73,17 +65,22 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
     None.
 
 *****************************************************************************/
-SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
-                               int windowWidthInPixels,
-                               int windowHeightInPixels,
-                               float sampleRate)
+SignalAnalyzer::SignalAnalyzer(DisplayType displayType,float sampleRate)
 {
   uint32_t i;
 
+  if (sampleRate <= 0)
+  {
+    // Keep it sane.
+    sampleRate = 256000;
+  } // if
+
   // Retrieve for later use.
   this->displayType = displayType;
-  this->windowWidthInPixels = windowWidthInPixels;
-  this->windowHeightInPixels = windowHeightInPixels;
+
+  // This is the display dimensions in pixels.
+  windowWidthInPixels = 1024;
+  windowHeightInPixels = 256;
 
   // Construct the Hanning window array.
   for (i = 0; i < N; i++)
@@ -140,52 +137,6 @@ SignalAnalyzer::~SignalAnalyzer(void)
   return;
 
 } // ~SignalAnalyzer
-
-/*****************************************************************************
-
-  Name: initializeAnnotationParameters
-
-  Purpose: The purpose of this function is to set up the scope annotations.
-  Examples are sweep time and frequency span.
-
-  Calling Sequence: initializeAnnotationParameters(sampleRate)
-
-  Inputs:
-
-    sampleRate - The sample rate of incoming IQ data in units of S/s.
-
- Outputs:
-
-    None.
-
-*****************************************************************************/
-void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
-{
-  float sweepTimeInMs;
-  float frequencySpanInKHz;
-
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Set up annotations.
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Compute sweep time in milliseconds.
-  sweepTimeInMs = N / sampleRate;
-  sweepTimeInMs *= 1000;
-
-  // Compute frequency span in kHz.
-  frequencySpanInKHz = sampleRate / 1000;;
-
-  // Save in buffers to be displayed in oscilloscope.
-  sprintf(sweepTimeBuffer,"Sweep Time: %.2fms",sweepTimeInMs);
-  sprintf(sweepTimeDivBuffer,"%.2fms/div",sweepTimeInMs/16);
-
-  // Save in buffers to be displayed in spectrum analyzer.
-  sprintf(frequencySpanBuffer,"Frequency Span: %.2fkHz",frequencySpanInKHz);
-  sprintf(frequencySpanDivBuffer,"%.2fkHz/div",frequencySpanInKHz/16);
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-
-  return;
-
-} // initialize annotationParameters
 
 /*****************************************************************************
 
@@ -352,6 +303,52 @@ void SignalAnalyzer::initializeX(void)
   return;
 
 } // initializeX
+
+/*****************************************************************************
+
+  Name: initializeAnnotationParameters
+
+  Purpose: The purpose of this function is to set up the scope annotations.
+  Examples are sweep time and frequency span.
+
+  Calling Sequence: initializeAnnotationParameters(sampleRate)
+
+  Inputs:
+
+    sampleRate - The sample rate of incoming IQ data in units of S/s.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
+{
+  float sweepTimeInMs;
+  float frequencySpanInKHz;
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Set up annotations.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Compute sweep time in milliseconds.
+  sweepTimeInMs = N / sampleRate;
+  sweepTimeInMs *= 1000;
+
+  // Compute frequency span in kHz.
+  frequencySpanInKHz = sampleRate / 1000;;
+
+  // Save in buffers to be displayed in oscilloscope.
+  sprintf(sweepTimeBuffer,"Sweep Time: %.2fms",sweepTimeInMs);
+  sprintf(sweepTimeDivBuffer,"%.2fms/div",sweepTimeInMs/16);
+
+  // Save in buffers to be displayed in spectrum analyzer.
+  sprintf(frequencySpanBuffer,"Frequency Span: %.2fkHz",frequencySpanInKHz);
+  sprintf(frequencySpanDivBuffer,"%.2fkHz/div",frequencySpanInKHz/16);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  return;
+
+} // initialize annotationParameters
 
 /*****************************************************************************
 

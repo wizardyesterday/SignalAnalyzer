@@ -30,12 +30,9 @@ class SignalAnalyzer
 
   public:
 
-  SignalAnalyzer(DisplayType displayType,int windowWidthInPixels,
-                 int windowHeightInPixels,float sampleRate);
-
+  SignalAnalyzer(DisplayType displayType,float sampleRate);
  ~SignalAnalyzer(void);
 
-  void drawGridlines(void);
   void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
   void plotPowerSpectrum(int8_t *signalBufferPtr,uint32_t bufferLength);
 
@@ -48,6 +45,7 @@ class SignalAnalyzer
   void initializeX(void);
   void initializeAnnotationParameters(float sampleRate);
   uint16_t convertRgbTo16Bit(uint8_t red,uint8_t green,uint8_t blue);
+  void drawGridlines(void);
 
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
                                   uint32_t bufferLength);
