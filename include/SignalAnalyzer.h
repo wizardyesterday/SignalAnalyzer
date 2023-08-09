@@ -46,6 +46,7 @@ class SignalAnalyzer
   //*******************************************************************
   void initializeFftw(void);
   void initializeX(void);
+  void initializeAnnotationParameters(float sampleRate);
   uint16_t convertRgbTo16Bit(uint8_t red,uint8_t green,uint8_t blue);
 
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
@@ -65,8 +66,6 @@ class SignalAnalyzer
   uint16_t scopeGridColor;
   uint16_t scopeSignalColor;
 
-  float sweepTimeInMs;
-  float frequencySpanInKHz;
   char sweepTimeBuffer[80];
   char sweepTimeDivBuffer[80];
   char frequencySpanBuffer[80];
