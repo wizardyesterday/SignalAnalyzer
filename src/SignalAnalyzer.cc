@@ -175,12 +175,12 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   frequencySpanInKHz = sampleRate / 1000;;
 
   // Save in buffers to be displayed in oscilloscope.
-  sprintf(sweepTimeBuffer,"Sweep Time: %.1fms",sweepTimeInMs);
-  sprintf(sweepTimeDivBuffer,"%.1fms/div",sweepTimeInMs/16);
+  sprintf(sweepTimeBuffer,"Sweep Time: %.2fms",sweepTimeInMs);
+  sprintf(sweepTimeDivBuffer,"%.2fms/div",sweepTimeInMs/16);
 
   // Save in buffers to be displayed in spectrum analyzer.
-  sprintf(frequencySpanBuffer,"Frequency Span: %.1fkHz",frequencySpanInKHz);
-  sprintf(frequencySpanDivBuffer,"%.1fkHz/div",frequencySpanInKHz/16);
+  sprintf(frequencySpanBuffer,"Frequency Span: %.2fkHz",frequencySpanInKHz);
+  sprintf(frequencySpanDivBuffer,"%.2fkHz/div",frequencySpanInKHz/16);
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   return;
