@@ -31,7 +31,7 @@ class SignalAnalyzer
   public:
 
   SignalAnalyzer(DisplayType displayType,int windowWidthInPixels,
-                 int windowHeightInPixels);
+                 int windowHeightInPixels,float sampleRate);
 
  ~SignalAnalyzer(void);
 
@@ -57,11 +57,21 @@ class SignalAnalyzer
   //*******************************************************************
   // Attributes.
   //*******************************************************************
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Display support.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   DisplayType displayType;
   uint16_t scopeBackgroundColor;
   uint16_t scopeGridColor;
   uint16_t scopeSignalColor;
+
+  float sweepTimeInMs;
+  float frequencySpanInKHz;
+  char sweepTimeBuffer[80];
+  char sweepTimeDivBuffer[80];
+  char frequencySpanBuffer[80];
+  char frequencySpanDivBuffer[80];
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // We ulitmately map values to these pixels.
   int windowWidthInPixels;

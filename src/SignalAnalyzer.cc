@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "SignalAnalyzer.h"
 
@@ -54,7 +55,8 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
   an instance of an SignalAnalyzer.
 
   Calling Sequence: SignalAnalyzer(windowWidthInPixels,
-                                   windowHeightInPixels)
+                                   windowHeightInPixels,
+                                   sampleRate)
  
   Inputs:
 
@@ -64,6 +66,8 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
     windowHeightInPixels - The number of pixels in the vertical
     direction.
 
+    sampleRate - The sample rate in S/s.
+
  Outputs:
 
     None.
@@ -71,7 +75,8 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
 *****************************************************************************/
 SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
                                int windowWidthInPixels,
-                               int windowHeightInPixels)
+                               int windowHeightInPixels,
+                               float sampleRate)
 {
   uint32_t i;
 
@@ -89,6 +94,25 @@ SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
   // Let's force this.
   windowWidthInPixels = 1024;
   windowHeightInPixels = 256;
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Set up annotations.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Compute sweep time in milliseconds.
+  sweepTimeInMs = N / sampleRate;
+  sweepTimeInMs *= 1000;
+
+  // Compute frequency span in kHz.
+  frequencySpanInKHz = sampleRate / 1000;;
+
+  // Save in buffers to be displayed in oscilloscope.
+  sprintf(sweepTimeBuffer,"Sweep Time: %.1fms",sweepTimeInMs);
+  sprintf(sweepTimeDivBuffer,"%.1fms/div",sweepTimeInMs/16);
+
+  // Save in buffers to be displayed in spectrum analyzer.
+  sprintf(frequencySpanBuffer,"Frequency Span: %.1fkHz",frequencySpanInKHz);
+  sprintf(frequencySpanDivBuffer,"%.1fkHz/div",frequencySpanInKHz/16);
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Set up the FFT stuff.
   initializeFftw();
@@ -500,11 +524,11 @@ void SignalAnalyzer::plotSignalMagnitude(
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
               768,20,
-              "Sweep Time: 32ms",16);
+              sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "2ms/div",7);
+              sweepTimeDivBuffer,strlen(sweepTimeDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.
@@ -582,11 +606,11 @@ void SignalAnalyzer::plotPowerSpectrum(
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
               768,20,
-              "Frequency Span: 256kHz",22);
+              frequencySpanBuffer,strlen(frequencySpanBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
               768,35,
-              "16kHz/div",9);
+              frequencySpanDivBuffer,strlen(frequencySpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.

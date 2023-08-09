@@ -159,7 +159,10 @@ int main(int argc,char **argv)
   } // if
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,1024,256);
+  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,
+                                   1024,
+                                   256,
+                                   256000);
 
   // Set up for loop entry.
   done = false;
