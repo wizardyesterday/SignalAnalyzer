@@ -163,9 +163,6 @@ int main(int argc,char **argv)
     return (0);
   } // if
 
-  fprintf(stderr,"block size %u\n",blockSize);
-  fprintf(stderr,"delay %u\n",delay);
-
   // Set up for loop entry.
   done = false;
 
