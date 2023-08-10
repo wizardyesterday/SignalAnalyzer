@@ -40,3 +40,15 @@ are your friends.  So is XDrawString() for placing text on the display.
 I'm not sure how different fonts on different systems will mess things up.
 
 
+------------------------------------------------------------------------
+08/10/2023
+------------------------------------------------------------------------
+We now have a file throttler that provides the ability to read from
+stdin, delay for a specified day, and output what was just read
+from stdin to stdout.
+This provides the ability to play back IQ data files in real time...
+well sort of.  On a multitasking system such as Linux, there will
+be extra latency in the delay.  Even with this restriction, you can
+output data to my signal analyzer, and view the spectrum in "sort of"
+real time.
+
