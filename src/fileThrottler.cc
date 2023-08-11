@@ -142,7 +142,6 @@ int main(int argc,char **argv)
 {
   bool done;
   bool exitProgram;
-  uint32_t i;
   uint32_t count;
   int status;
   int8_t inputBuffer[MAX_BLOCK_SIZE];
