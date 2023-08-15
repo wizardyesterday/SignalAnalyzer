@@ -765,7 +765,7 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     // Store the real value.
     fftInputPtr[j][0] = (double)signalBufferPtr[i] * hanningWindow[j];
 
-    // Store the comple value.
+    // Store the imaginary value.
     fftInputPtr[j][1] = (double)signalBufferPtr[i+1] * hanningWindow[j];
 
     // Reference the next storage location.
