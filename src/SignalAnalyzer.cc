@@ -743,7 +743,6 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
 {
   uint32_t i;
   uint32_t j;
-  int16_t temp;
   int16_t iMagnitude, qMagnitude;
   double power;
   double powerInDb;
