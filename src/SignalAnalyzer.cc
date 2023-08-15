@@ -88,10 +88,6 @@ SignalAnalyzer::SignalAnalyzer(DisplayType displayType,float sampleRate)
     hanningWindow[i] = 0.5 - 0.5 * cos((2 * M_PI * i)/N);
   } // for
 
-  // Let's force this.
-  windowWidthInPixels = 1024;
-  windowHeightInPixels = 256;
-
   // Set up the FFT stuff.
   initializeFftw();
 
