@@ -22,7 +22,7 @@
 // This is the FFT size.
 #define N (8192)
 
-enum DisplayType {SignalMagnitude=1, PowerSpectrum};
+enum DisplayType {SignalMagnitude=1, PowerSpectrum, Lissajous};
 
 class SignalAnalyzer
 {
@@ -35,6 +35,7 @@ class SignalAnalyzer
 
   void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
   void plotPowerSpectrum(int8_t *signalBufferPtr,uint32_t bufferLength);
+  void plotLissajous(int8_t *signalBufferPtr,uint32_t bufferLength);
 
   private:
 
@@ -68,6 +69,7 @@ class SignalAnalyzer
   char sweepTimeDivBuffer[80];
   char frequencySpanBuffer[80];
   char frequencySpanDivBuffer[80];
+  char lissajousSpanDivBuffer[80];
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // We ulitmately map values to these pixels.

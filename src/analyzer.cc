@@ -18,6 +18,7 @@
 //    displayType - The type of display.  Valid values are;
 //    1 - Magnitude display.
 //    2 - Power spectrum display.
+//    3 - Lissajous display.
 //
 //    The D flag indicates that raw IQ data should be dumped to stdout.
 //    This allows the data to be piped to another program.  Here's how
@@ -120,7 +121,8 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
       case 'h':
       {
         // Display usage.
-        fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum]\n"
+        fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum |"
+                " 3 - lissajous]\n"
                 "-r samplerate (S/s)\n -D (dump raw IQ)\n");
 
         // Indicate that program must be exited.
@@ -201,6 +203,12 @@ int main(int argc,char **argv)
         case PowerSpectrum:
         {
           analyzerPtr->plotPowerSpectrum(inputBuffer,count);
+          break;
+        } // case
+
+        case Lissajous:
+        {
+          analyzerPtr->plotLissajous(inputBuffer,count);
           break;
         } // case
 
