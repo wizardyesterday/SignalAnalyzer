@@ -590,11 +590,11 @@ void SignalAnalyzer::plotSignalMagnitude(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              768,20,
+              windowWidthInPixels-180,20,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              768,35,
+              windowWidthInPixels-180,35,
               sweepTimeDivBuffer,strlen(sweepTimeDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -672,11 +672,11 @@ void SignalAnalyzer::plotPowerSpectrum(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              768,20,
+              windowWidthInPixels-180,20,
               frequencySpanBuffer,strlen(frequencySpanBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              768,35,
+              windowWidthInPixels-180,35,
               frequencySpanDivBuffer,strlen(frequencySpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -747,11 +747,11 @@ void SignalAnalyzer::plotLissajous(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              768,20,
+              windowWidthInPixels-180,20,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              768,35,
+              windowWidthInPixels-180,35,
               lissajousSpanDivBuffer,strlen(lissajousSpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
