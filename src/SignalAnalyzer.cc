@@ -82,6 +82,10 @@ SignalAnalyzer::SignalAnalyzer(DisplayType displayType,float sampleRate)
   windowWidthInPixels = 1024;
   windowHeightInPixels = 256;
 
+  // Set strides.
+  spectrumStride = N / windowWidthInPixels;
+  signalStride = N / windowWidthInPixels;
+
   // Construct the Hanning window array.
   for (i = 0; i < N; i++)
   {
@@ -565,8 +569,8 @@ void SignalAnalyzer::plotSignalMagnitude(
   // Reference the starts of the points array.
   j = 0;
 
-  // We're fitting an 8192 IQ samples to a 1024 pixel display width.
-  for (i = 0; i < bufferLength; i += 8)
+  // We're fitting an 8192 IQ samples to the display width.
+  for (i = 0; i < bufferLength; i += signalStride)
   {
     points[j].x = (short)j;
     points[j].y = windowHeightInPixels - magnitudeBuffer[i];
@@ -647,8 +651,8 @@ void SignalAnalyzer::plotPowerSpectrum(
   // Reference the starts of the points array.
   j = 0;
 
-  // We're fitting an 8192-point FFT to a 1024 pixel display width.
-  for (i = 0; i < bufferLength; i += 8)
+  // We're fitting an 8192-point FFT to the display width.
+  for (i = 0; i < bufferLength; i += spectrumStride)
   {
     points[j].x = (short)j;
     points[j].y = windowHeightInPixels - magnitudeBuffer[i];
@@ -725,7 +729,7 @@ void SignalAnalyzer::plotLissajous(
 {
   uint32_t i;
 
-  // We're fitting an 8192 IQ samples to a 1024 pixel display width.
+  // We're fitting an 8192 IQ samples to the display width.
   for (i = 0; i < bufferLength; i += 2)
   {
     points[i].x = (windowWidthInPixels / 2) + (short)signalBufferPtr[i];
