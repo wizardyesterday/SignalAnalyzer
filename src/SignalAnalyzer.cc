@@ -331,6 +331,9 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   float sweepTimeInMs;
   float frequencySpanInKHz;
 
+  // I like this in one place.
+  annotationHorizontalPosition = windowWidthInPixels - 180;
+
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Set up annotations.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -566,7 +569,7 @@ void SignalAnalyzer::plotSignalMagnitude(
 
   bufferLength = computeSignalMagnitude(signalBufferPtr,bufferLength);
 
-  // Reference the starts of the points array.
+  // Reference the start of the points array.
   j = 0;
 
   // We're fitting an 8192 IQ samples to the display width.
@@ -594,11 +597,11 @@ void SignalAnalyzer::plotSignalMagnitude(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,20,
+              annotationHorizontalPosition,20,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,35,
+              annotationHorizontalPosition,35,
               sweepTimeDivBuffer,strlen(sweepTimeDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -648,7 +651,7 @@ void SignalAnalyzer::plotPowerSpectrum(
 
   bufferLength = computePowerSpectrum(signalBufferPtr,bufferLength);
 
-  // Reference the starts of the points array.
+  // Reference the start of the points array.
   j = 0;
 
   // We're fitting an 8192-point FFT to the display width.
@@ -676,11 +679,11 @@ void SignalAnalyzer::plotPowerSpectrum(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,20,
+              annotationHorizontalPosition,20,
               frequencySpanBuffer,strlen(frequencySpanBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,35,
+              annotationHorizontalPosition,35,
               frequencySpanDivBuffer,strlen(frequencySpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -751,11 +754,11 @@ void SignalAnalyzer::plotLissajous(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,20,
+              annotationHorizontalPosition,20,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              windowWidthInPixels-180,35,
+              annotationHorizontalPosition,35,
               lissajousSpanDivBuffer,strlen(lissajousSpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 

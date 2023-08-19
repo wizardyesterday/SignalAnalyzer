@@ -71,6 +71,8 @@ class SignalAnalyzer
   char frequencySpanDivBuffer[80];
   char lissajousSpanDivBuffer[80];
 
+  int annotationHorizontalPosition;
+
   uint32_t spectrumStride;
   uint32_t signalStride;
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
