@@ -689,7 +689,7 @@ void SignalAnalyzer::plotLissajous(
   uint32_t i;
 
   // We're fitting an 8192 IQ samples to a 1024 pixel display width.
-  for (i = 0; i < bufferLength; i += 4)
+  for (i = 0; i < bufferLength; i += 2)
   {
     points[i].x = (windowWidthInPixels / 2) + (short)signalBufferPtr[i];
     points[i].y = (windowHeightInPixels / 2) - (short)signalBufferPtr[i+1];
@@ -723,7 +723,7 @@ void SignalAnalyzer::plotLissajous(
              window,
              graphicsContext,
              points,
-             (bufferLength/4),
+             (bufferLength/2),
              CoordModeOrigin);
 
   // Send the request to the server
