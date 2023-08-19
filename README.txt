@@ -52,3 +52,9 @@ be extra latency in the delay.  Even with this restriction, you can
 output data to my signal analyzer, and view the spectrum in "sort of"
 real time.
 
+------------------------------------------------------------------------
+08/18/2023
+------------------------------------------------------------------------
+We now have a Lissajous scope.  This provides the capability to see
+the quality of the IQ data.
+

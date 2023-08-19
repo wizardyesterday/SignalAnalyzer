@@ -268,6 +268,12 @@ void SignalAnalyzer::initializeX(void)
       break;
     } // case
 
+    case Lissajous:
+    {
+      XStoreName(displayPtr,window,"Lissajous Scope");
+      break;
+    } // case
+
     default:
     {
       XStoreName(displayPtr,window,"Signal Analyzer");
@@ -338,6 +344,9 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   // Save in buffers to be displayed in spectrum analyzer.
   sprintf(frequencySpanBuffer,"Frequency Span: %.2fkHz",frequencySpanInKHz);
   sprintf(frequencySpanDivBuffer,"%.2fkHz/div",frequencySpanInKHz/16);
+
+  // Save in buffers to displayed in Lissajous scope.
+  sprintf(lissajousSpanDivBuffer,"64units/div");
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   return;
@@ -519,7 +528,7 @@ void SignalAnalyzer::plotSignalMagnitude(
   // Reference the starts of the points array.
   j = 0;
 
-  // We're fitting an 8192-point FFT to a 1024 pixel display width.
+  // We're fitting an 8192 IQ samples to a 1024 pixel display width.
   for (i = 0; i < bufferLength; i += 8)
   {
     points[j].x = (short)j;
@@ -647,6 +656,82 @@ void SignalAnalyzer::plotPowerSpectrum(
   return;
 
 } // plotPowerSpectrum
+
+/*****************************************************************************
+
+  Name: plotLissajous
+
+  Purpose: The purpose of this function is to perform a Lissajous plot
+  of IQ data to the display.  This provides a nice indication as to
+  whether or not the IQ data samples are clipping.  Clipping is indicated
+  by a square pattern.
+
+  Calling Sequence: plotLissajous(signalBufferPtr,bufferLength)
+
+  Inputs:
+
+    signalBufferPtr - A pointer to a buffer of IQ data.  The buffer is
+    formatted with interleaved data as: I1,Q1,I2,Q2,...
+
+    bufferLength - The number of values in the signal buffer.  This
+    represents the total number of items in the buffer, rather than
+    the number of IQ sample pairs in the buffer.
+
+ Outputs:
+
+    None.
+
+*****************************************************************************/
+void SignalAnalyzer::plotLissajous(
+  int8_t *signalBufferPtr,
+  uint32_t bufferLength)
+{
+  uint32_t i;
+
+  // We're fitting an 8192 IQ samples to a 1024 pixel display width.
+  for (i = 0; i < bufferLength; i += 2)
+  {
+    points[i].x = (windowWidthInPixels / 2) + (short)signalBufferPtr[i];
+    points[i].y = (windowHeightInPixels / 2) - (short)signalBufferPtr[i+1];
+  } // for
+
+  // Erase the previous plot.
+  XClearWindow(displayPtr,window);
+
+  // Make this display pretty.
+  drawGridlines();
+
+  // Set the signal color.
+  XSetForeground(displayPtr,graphicsContext,scopeSignalColor);
+
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // Annotate the display.  This is really too
+  // sensitive to fonts.  I'll think of something
+  // later.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  XDrawString(displayPtr,window,graphicsContext,
+              768,20,
+              sweepTimeBuffer,strlen(sweepTimeBuffer));
+
+  XDrawString(displayPtr,window,graphicsContext,
+              768,35,
+              lissajousSpanDivBuffer,strlen(lissajousSpanDivBuffer));
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+  // Plot the signal.
+  XDrawPoints(displayPtr,
+             window,
+             graphicsContext,
+             points,
+             (bufferLength/2),
+             CoordModeOrigin);
+
+  // Send the request to the server
+  XFlush(displayPtr);
+
+  return;
+
+} // plotLissajous
 
 /*****************************************************************************
 
