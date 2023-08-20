@@ -72,6 +72,8 @@ class SignalAnalyzer
   char lissajousSpanDivBuffer[80];
 
   int annotationHorizontalPosition;
+  int annotationFirstLinePosition;
+  int annotationSecondLinePosition;
 
   uint32_t spectrumStride;
   uint32_t signalStride;

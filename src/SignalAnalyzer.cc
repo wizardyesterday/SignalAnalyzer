@@ -330,9 +330,45 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
 {
   float sweepTimeInMs;
   float frequencySpanInKHz;
+  int fontHeight;
+  int fontWidth;
+  XFontStruct *fontInfoPtr;
 
-  // I like this in one place.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // This is our font stuff.  By experiment, I see that
+  // fixed fonts are 9 pixels high and 6 pixels wide.  Now,
+  // the starting horizontal postion of the annotations is
+  // 180 pixels to the left or the right boundary of the
+  // window.  That means that the maximum amount of
+  // characters is 180 / 6 = 30 - some spare change = 29
+  // characters.  Not too shoddy.  If you need more, just
+  // adjust the number.
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+  // This is deterministic with respect to size.
+  fontInfoPtr = XLoadQueryFont(displayPtr,"fixed");
+
+  XSetFont(displayPtr,
+           graphicsContext,
+           fontInfoPtr->fid);
+
+  // Compute the height and width of the font.
+  fontHeight = fontInfoPtr->ascent - fontInfoPtr->descent;
+  fontWidth = XTextWidth(fontInfoPtr,"A",strlen("A"));
+
+  // Set our vertical positions of the annotations.
+  annotationFirstLinePosition = fontHeight + 6;
+  annotationSecondLinePosition = annotationFirstLinePosition + 15;
+
+  //-------------------------------------------------------
+  // This is where the annotation will start.  Remember
+  // that you can have (180 / 6) - 1 = 29 characters.
+  // This is where you adjust things.  Also remember
+  // that, for a fixed font, the pixel height is 9 pixels,
+  // and the pixel width is 6 pixels.  This will save you
+  // lots of grief when adjusting things.
+  //-------------------------------------------------------
   annotationHorizontalPosition = windowWidthInPixels - 180;
+  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Set up annotations.
@@ -597,11 +633,13 @@ void SignalAnalyzer::plotSignalMagnitude(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,20,
+              annotationHorizontalPosition,
+              annotationFirstLinePosition,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,35,
+              annotationHorizontalPosition,
+              annotationSecondLinePosition,
               sweepTimeDivBuffer,strlen(sweepTimeDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -679,11 +717,13 @@ void SignalAnalyzer::plotPowerSpectrum(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,20,
+              annotationHorizontalPosition,
+              annotationFirstLinePosition,
               frequencySpanBuffer,strlen(frequencySpanBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,35,
+              annotationHorizontalPosition,
+              annotationSecondLinePosition,
               frequencySpanDivBuffer,strlen(frequencySpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
@@ -754,11 +794,13 @@ void SignalAnalyzer::plotLissajous(
   // later.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,20,
+              annotationHorizontalPosition,
+              annotationFirstLinePosition,
               sweepTimeBuffer,strlen(sweepTimeBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
-              annotationHorizontalPosition,35,
+              annotationHorizontalPosition,
+              annotationSecondLinePosition,
               lissajousSpanDivBuffer,strlen(lissajousSpanDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
