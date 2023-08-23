@@ -330,6 +330,7 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
 {
   float sweepTimeInMs;
   float frequencySpanInKHz;
+  float sampleRateInKHz;
   int fontHeight;
   int fontWidth;
   XFontStruct *fontInfoPtr;
@@ -378,7 +379,8 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   sweepTimeInMs *= 1000;
 
   // Compute frequency span in kHz.
-  frequencySpanInKHz = sampleRate / 1000;;
+  frequencySpanInKHz = sampleRate / 1000;
+  sampleRateInKHz = sampleRate / 1000;
 
   // Save in buffers to be displayed in oscilloscope.
   sprintf(sweepTimeBuffer,"Sweep Time: %.2fms",sweepTimeInMs);
@@ -389,7 +391,8 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   sprintf(frequencySpanDivBuffer,"%.2fkHz/div",frequencySpanInKHz/16);
 
   // Save in buffers to displayed in Lissajous scope.
-  sprintf(lissajousSpanDivBuffer,"64units/div");
+  sprintf(sampleRateBuffer,"Sample Rate: %.2fkHz",sampleRateInKHz);
+  sprintf(lissajousDivBuffer,"64units/div");
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   return;
@@ -796,12 +799,12 @@ void SignalAnalyzer::plotLissajous(
   XDrawString(displayPtr,window,graphicsContext,
               annotationHorizontalPosition,
               annotationFirstLinePosition,
-              sweepTimeBuffer,strlen(sweepTimeBuffer));
+              sampleRateBuffer,strlen(sampleRateBuffer));
 
   XDrawString(displayPtr,window,graphicsContext,
               annotationHorizontalPosition,
               annotationSecondLinePosition,
-              lissajousSpanDivBuffer,strlen(lissajousSpanDivBuffer));
+              lissajousDivBuffer,strlen(lissajousDivBuffer));
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // Plot the signal.

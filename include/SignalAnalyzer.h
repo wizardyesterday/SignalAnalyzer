@@ -69,7 +69,8 @@ class SignalAnalyzer
   char sweepTimeDivBuffer[80];
   char frequencySpanBuffer[80];
   char frequencySpanDivBuffer[80];
-  char lissajousSpanDivBuffer[80];
+  char sampleRateBuffer[80];
+  char lissajousDivBuffer[80];
 
   int annotationHorizontalPosition;
   int annotationFirstLinePosition;
