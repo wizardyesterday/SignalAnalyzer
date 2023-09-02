@@ -11,7 +11,7 @@
 //
 // To run this program type,
 // 
-//     ./analyzer > -d <displaytype> -r <sampleRate> -D
+//     ./analyzer -d <displaytype> -r <sampleRate> -D < inputFile
 //
 // where,
 //
@@ -31,8 +31,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
-
-#include <unistd.h>   // So we got the profile for 10 seconds
+#include <unistd.h>
 
 #include "SignalAnalyzer.h"
 
@@ -123,7 +122,8 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
         // Display usage.
         fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum |"
                 " 3 - lissajous]\n"
-                "-r samplerate (S/s)\n -D (dump raw IQ)\n");
+                "           -r samplerate (S/s) -D (dump raw IQ) "
+                 "< inputFile\n");
 
         // Indicate that program must be exited.
         exitProgram = true;
