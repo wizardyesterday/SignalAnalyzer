@@ -209,21 +209,11 @@ void SignalAnalyzer::initializeX(void)
 {
   int blackColor;
   int whiteColor;
+  int screen;
+  Colormap colormap;
+  XColor exact;
+  XColor closest;
   XEvent event;
-
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Initialize colors.  These colors will throughout
-  // the application.
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Background is midnight blue.
-  scopeBackgroundColor = convertRgbTo16Bit(25,25,112);
-
-  // Grid is yellow.
-  scopeGridColor = convertRgbTo16Bit(255,255,0);
-
-  // Signal is green.
-  scopeSignalColor = convertRgbTo16Bit(0,255,0);
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   // Setup X.
@@ -237,6 +227,30 @@ void SignalAnalyzer::initializeX(void)
   // Retrieve these two colors.
   blackColor = BlackPixel(displayPtr,DefaultScreen(displayPtr));
   whiteColor = WhitePixel(displayPtr,DefaultScreen(displayPtr));
+
+  //-------------------------------------------------------
+  // Initialize colors.  These colors will be used
+  // throughout the application.
+  //-------------------------------------------------------
+  // We need these for the color lookup invocations.
+  screen = DefaultScreen(displayPtr);
+  colormap = DefaultColormap(displayPtr,screen);
+
+  // Background is midnight blue.
+  XLookupColor(displayPtr,colormap,"midnight blue",&exact,&closest);
+  scopeBackgroundColor =
+    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+
+  // Grid is yellow.
+  XLookupColor(displayPtr,colormap,"yellow",&exact,&closest);
+  scopeGridColor =
+    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+
+  // Signal is green.
+  XLookupColor(displayPtr,colormap,"green",&exact,&closest);
+  scopeSignalColor =
+    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+  //-------------------------------------------------------
 
   // Create the window.
   window = XCreateSimpleWindow(displayPtr,
@@ -299,7 +313,6 @@ void SignalAnalyzer::initializeX(void)
     } // if);
   } // for
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-
 
   // Send the request to the server
   XFlush(displayPtr);
