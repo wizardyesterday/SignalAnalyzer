@@ -269,7 +269,7 @@ void SignalAnalyzer::initializeX(void)
   // Create a "Graphics Context".
   graphicsContext = XCreateGC(displayPtr,window,0,NULL);
 
-  // First-time foreground is whit.
+  // First-time foreground is white.
   XSetForeground(displayPtr,graphicsContext,whiteColor);
 
   switch (displayType)			
