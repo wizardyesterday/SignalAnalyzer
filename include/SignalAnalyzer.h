@@ -45,7 +45,6 @@ class SignalAnalyzer
   void initializeFftw(void);
   void initializeX(void);
   void initializeAnnotationParameters(float sampleRate);
-  uint16_t convertRgbTo16Bit(uint8_t red,uint8_t green,uint8_t blue);
   void drawGridlines(void);
 
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
@@ -61,9 +60,9 @@ class SignalAnalyzer
   // Display support.
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
   DisplayType displayType;
-  uint16_t scopeBackgroundColor;
-  uint16_t scopeGridColor;
-  uint16_t scopeSignalColor;
+  unsigned long scopeBackgroundColor;
+  unsigned long scopeGridColor;
+  unsigned long scopeSignalColor;
 
   char sweepTimeBuffer[80];
   char sweepTimeDivBuffer[80];

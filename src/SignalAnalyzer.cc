@@ -238,15 +238,15 @@ void SignalAnalyzer::initializeX(void)
 
   // Background is midnight blue.
   XAllocNamedColor(displayPtr,colormap,"midnight blue",&exact,&closest);
-  scopeBackgroundColor = exact.pixel;
+  scopeBackgroundColor = closest.pixel;
 
   // Grid is yellow.
   XAllocNamedColor(displayPtr,colormap,"yellow",&exact,&closest);
-  scopeGridColor = exact.pixel;
+  scopeGridColor = closest.pixel;
 
   // Signal is green.
   XAllocNamedColor(displayPtr,colormap,"green",&exact,&closest);
-  scopeSignalColor = exact.pixel;
+  scopeSignalColor = closest.pixel;
   //-------------------------------------------------------
 
   // Create the window.
