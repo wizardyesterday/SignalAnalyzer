@@ -237,19 +237,16 @@ void SignalAnalyzer::initializeX(void)
   colormap = DefaultColormap(displayPtr,screen);
 
   // Background is midnight blue.
-  XLookupColor(displayPtr,colormap,"midnight blue",&exact,&closest);
-  scopeBackgroundColor =
-    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+  XAllocNamedColor(displayPtr,colormap,"midnight blue",&exact,&closest);
+  scopeBackgroundColor = exact.pixel;
 
   // Grid is yellow.
-  XLookupColor(displayPtr,colormap,"yellow",&exact,&closest);
-  scopeGridColor =
-    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+  XAllocNamedColor(displayPtr,colormap,"yellow",&exact,&closest);
+  scopeGridColor = exact.pixel;
 
   // Signal is green.
-  XLookupColor(displayPtr,colormap,"green",&exact,&closest);
-  scopeSignalColor =
-    convertRgbTo16Bit(exact.red/256,exact.green/256,exact.blue/256);
+  XAllocNamedColor(displayPtr,colormap,"green",&exact,&closest);
+  scopeSignalColor = exact.pixel;
   //-------------------------------------------------------
 
   // Create the window.
@@ -411,61 +408,6 @@ void SignalAnalyzer::initializeAnnotationParameters(float sampleRate)
   return;
 
 } // initialize annotationParameters
-
-/*****************************************************************************
-
-  Name: convertRgbTo16Bit
-
-  Purpose: The purpose of this function is to convert an rgb triple into
-  a value that is suitable for 16-bit displays.
-
-  Note: For a 16-bit display, the partitioning of the color values
-  are as follows (with r = red, g = green, blue = blue):
-
-  r[4:0], g[5:0], blue[4:0] = rrrrr gggggg bbbbb = 16 bits
-
-  Calling Sequence: value = convertRgbTo16Bit(red,green,blue)
-
-  Inputs:
-
-    red - The red contribution [0,255].
-
-    green - The green contribution [0,255].
-
-    blue - The blue contribution [0,255].
-
-  Outputs:
-
-    value = The 16-bit representation of the rgb value.
-
-*****************************************************************************/
-uint16_t SignalAnalyzer::convertRgbTo16Bit(
-  uint8_t red,
-  uint8_t green,
-  uint8_t blue)
-{
-  uint16_t value;
-  uint16_t r, g, b;
-
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Form the quantized values.
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-  // Quantize to 5 bits.
-  r = red / 8;
-
-  // Quantize to 6 bits.
-  g = green / 4;
-
-  // Quantize to 5 bits.
-  b = blue / 8;
-  //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
-
-  // Construct the 16-bit value.
-  value = (r << 11) | (g << 5) | b;
-  
-  return (value);
-
-} // convertRgbTo16Bit
 
 /*****************************************************************************
 
