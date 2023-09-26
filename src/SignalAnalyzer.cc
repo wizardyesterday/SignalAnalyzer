@@ -474,7 +474,7 @@ void SignalAnalyzer::drawGridlines(void)
               windowWidthInPixels,
               verticalPosition);
 
-    // Compute next horizontal position of vertical grid.
+    // Compute next vertical position of horizontal grid.
     verticalPosition += deltaV;
   } // for
 
