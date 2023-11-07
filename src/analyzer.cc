@@ -11,7 +11,7 @@
 //
 // To run this program type,
 // 
-//     ./analyzer -d <displaytype> -r <sampleRate> -D < inputFile
+//     ./analyzer -d <displaytype> -r <sampleRate> -U -D < inputFile
 //
 // where,
 //
@@ -19,6 +19,11 @@
 //    1 - Magnitude display.
 //    2 - Power spectrum display.
 //    3 - Lissajous display.
+//
+//    The U flag indicates that the IQ samples are unsigned 8-bit
+//    quantities rather than the default signed values.  This allows
+//    this program to work with the standard rtl-sdr tools such as
+//    rtl_sdr.
 //
 //    The D flag indicates that raw IQ data should be dumped to stdout.
 //    This allows the data to be piped to another program.  Here's how
@@ -40,6 +45,7 @@ struct MyParameters
 {
   int *displayTypePtr;
   float *sampleRatePtr;
+  bool *unsignedSamplesPtr;
   bool *iqDumpPtr;
 };
 
@@ -82,6 +88,9 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   // Default to 256000S/s.
   *parameters.sampleRatePtr = 256000;
 
+  // Default to signed IQ samples.
+  *parameters.unsignedSamplesPtr = false;
+
   // Default to not dumping IQ data.
   *parameters.iqDumpPtr = false;
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
@@ -95,7 +104,7 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   while (!done)
   {
     // Retrieve the next option.
-    opt = getopt(argc,argv,"d:-r:-Dh");
+    opt = getopt(argc,argv,"d:r:UDh");
 
     switch (opt)
     {
@@ -111,6 +120,12 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
         break;
       } // case
 
+      case 'U':
+      {
+        *parameters.unsignedSamplesPtr = true;
+        break;
+      } // case
+
       case 'D':
       {
         *parameters.iqDumpPtr = true;
@@ -122,8 +137,8 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
         // Display usage.
         fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum |"
                 " 3 - lissajous]\n"
-                "           -r samplerate (S/s) -D (dump raw IQ) "
-                 "< inputFile\n");
+                "           -r samplerate (S/s) -U (unsigned samples)\n"
+                "           -D (dump raw IQ) < inputFile\n");
 
         // Indicate that program must be exited.
         exitProgram = true;
@@ -150,19 +165,22 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
 int main(int argc,char **argv)
 {
   bool done;
+  int8_t *signedBufferPtr;
   bool exitProgram;
   uint32_t i;
   uint32_t count;
-  int8_t inputBuffer[16384];
+  uint8_t inputBuffer[16384];
   SignalAnalyzer *analyzerPtr;
   int displayType;
   float sampleRate;
+  bool unsignedSamples;
   bool iqDump;
   struct MyParameters parameters;
 
   // Set up for parameter transmission.
   parameters.displayTypePtr = &displayType;
   parameters.sampleRatePtr = &sampleRate;
+  parameters.unsignedSamplesPtr = &unsignedSamples;
   parameters.iqDumpPtr = &iqDump;
 
   // Retrieve the system parameters.
@@ -176,6 +194,9 @@ int main(int argc,char **argv)
 
   // Instantiate signal analyzer.
   analyzerPtr = new SignalAnalyzer((DisplayType)displayType,sampleRate);
+
+  // Reference the input buffer in 8-bit signed context.
+  signedBufferPtr = (int8_t *)inputBuffer;
 
   // Set up for loop entry.
   done = false;
@@ -192,23 +213,32 @@ int main(int argc,char **argv)
     } // if
     else
     {
+      if (unsignedSamples)
+      {
+        for (i = 0; i < count; i++)
+        {
+          // Convert unsigned samples to signed quantities.
+          signedBufferPtr[i] -= 128;
+        } // for
+      } // if
+
       switch (displayType)
       {
         case SignalMagnitude:
         {
-          analyzerPtr->plotSignalMagnitude(inputBuffer,count);
+          analyzerPtr->plotSignalMagnitude(signedBufferPtr,count);
           break;
         } // case
 
         case PowerSpectrum:
         {
-          analyzerPtr->plotPowerSpectrum(inputBuffer,count);
+          analyzerPtr->plotPowerSpectrum(signedBufferPtr,count);
           break;
         } // case
 
         case Lissajous:
         {
-          analyzerPtr->plotLissajous(inputBuffer,count);
+          analyzerPtr->plotLissajous(signedBufferPtr,count);
           break;
         } // case
 
@@ -217,7 +247,7 @@ int main(int argc,char **argv)
       if (iqDump == true)
       {
         // Write to stdout so that raw IQ can be piped to another program.
-        fwrite(inputBuffer,sizeof(int8_t),(2 * N),stdout);
+        fwrite(signedBufferPtr,sizeof(int8_t),(2 * N),stdout);
       } // if
 
     } // else
