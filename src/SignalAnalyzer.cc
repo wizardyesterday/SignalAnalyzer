@@ -917,11 +917,13 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     qK = fftOutputPtr[i][1];
 
     // Compute signal power, |I + jQ|.
-    power = (iK * iK) + (qK * qK) / (N * N);
+    power = (iK * iK) + (qK * qK);
 
     // We want power in decibels.
     powerInDb = 10*log10(power);
-    powerInDb *= 1.55;
+
+    // Scale to display 30dB per division.
+    powerInDb *= (3.2 / 1.5);;
 
     //--------------------------------------------
     // The fftShiftTable[] allows us to store
