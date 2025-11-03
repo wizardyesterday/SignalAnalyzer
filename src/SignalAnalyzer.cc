@@ -54,20 +54,30 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
   Purpose: The purpose of this function is to serve as the constructor for
   an instance of an SignalAnalyzer.
 
-  Calling Sequence: SignalAnalyzer(sampleRate)
+  Calling Sequence: SignalAnalyzer(displayTypesampleRate,baselineInDb))
  
   Inputs:
 
+    displayType - The type of analyzer display.
+
     sampleRate - The sample rate of incoming IQ data in units of S/s.
+    
+    baselineInDb - The spectrum analyzer reference level in decibels.
 
  Outputs:
 
     None.
 
 *****************************************************************************/
-SignalAnalyzer::SignalAnalyzer(DisplayType displayType,float sampleRate)
+SignalAnalyzer::SignalAnalyzer(
+  DisplayType displayType,
+  float sampleRate,
+  int32_t baselineInDb)
 {
   uint32_t i;
+
+  // Spectrum display baseline.
+  this->baselineInDb = baselineInDb;
 
   if (sampleRate <= 0)
   {
@@ -925,11 +935,11 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     // We want power in decibels.
     powerInDb = 10*log10(power);
 
+    // Set the baseline to the reference level..
+    powerInDb += baselineInDb;
+
     // Scale to display 20dB per division.
     powerInDb *= 3.2;
-
-    // Set the baseline to 10dB.
-    powerInDb += 10;
 
     //--------------------------------------------
     // The fftShiftTable[] allows us to store

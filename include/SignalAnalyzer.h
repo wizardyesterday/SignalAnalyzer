@@ -30,7 +30,7 @@ class SignalAnalyzer
 
   public:
 
-  SignalAnalyzer(DisplayType displayType,float sampleRate);
+  SignalAnalyzer(DisplayType displayType,float sampleRate,int32_t baselineInDb);
  ~SignalAnalyzer(void);
 
   void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
@@ -77,6 +77,7 @@ class SignalAnalyzer
 
   uint32_t spectrumStride;
   uint32_t signalStride;
+  int32_t baselineInDb;
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 
   // We ulitmately map values to these pixels.

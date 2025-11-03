@@ -193,7 +193,7 @@ int main(int argc,char **argv)
   } // if
 
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,sampleRate);
+  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,sampleRate,10);
 
   // Reference the input buffer in 8-bit signed context.
   signedBufferPtr = (int8_t *)inputBuffer;
