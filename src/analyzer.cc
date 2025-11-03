@@ -11,7 +11,8 @@
 //
 // To run this program type,
 // 
-//     ./analyzer -d <displaytype> -r <sampleRate> -U -D < inputFile
+//    ./analyzer -d <displaytype> -r <sampleRate> -R <referenceLevel
+//               -U -D < inputFile
 //
 // where,
 //
@@ -31,6 +32,9 @@
 //    ./analyzer -d 2 > >(other program to accept IQ data).
 //
 //    sampleRate - The sample rate of the IQ data in S/s.
+//
+//    referenceLevel - The reference level of the spectrum display in dB.
+//
 ///*************************************************************************
 #include <stdio.h>
 #include <stdint.h>
@@ -45,6 +49,7 @@ struct MyParameters
 {
   int *displayTypePtr;
   float *sampleRatePtr;
+  int32_t *spectrumReferenceLevelPtr;
   bool *unsignedSamplesPtr;
   bool *iqDumpPtr;
 };
@@ -88,6 +93,9 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   // Default to 256000S/s.
   *parameters.sampleRatePtr = 256000;
 
+  // Default to 0dB reference level.
+  *parameters.spectrumReferenceLevelPtr = 0;
+
   // Default to signed IQ samples.
   *parameters.unsignedSamplesPtr = false;
 
@@ -104,7 +112,7 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   while (!done)
   {
     // Retrieve the next option.
-    opt = getopt(argc,argv,"d:r:UDh");
+    opt = getopt(argc,argv,"d:r:R:UDh");
 
     switch (opt)
     {
@@ -117,6 +125,12 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
       case 'r':
       {
         *parameters.sampleRatePtr = atof(optarg);
+        break;
+      } // case
+
+      case 'R':
+      {
+        *parameters.spectrumReferenceLevelPtr = atol(optarg);
         break;
       } // case
 
@@ -137,7 +151,9 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
         // Display usage.
         fprintf(stderr,"./analyzer -d [1 - magnitude | 2 - spectrum |"
                 " 3 - lissajous]\n"
-                "           -r samplerate (S/s) -U (unsigned samples)\n"
+                "           -r samplerate (S/s) \n"
+                "           -R spectrumreferencelevel (dB)\n"
+                "           -U (unsigned samples)\n"
                 "           -D (dump raw IQ) < inputFile\n");
 
         // Indicate that program must be exited.
@@ -174,6 +190,7 @@ int main(int argc,char **argv)
   int displayType;
   float sampleRate;
   bool unsignedSamples;
+  int32_t spectrumReferenceLevel;
   bool iqDump;
   struct MyParameters parameters;
 
@@ -181,6 +198,7 @@ int main(int argc,char **argv)
   parameters.displayTypePtr = &displayType;
   parameters.sampleRatePtr = &sampleRate;
   parameters.unsignedSamplesPtr = &unsignedSamples;
+  parameters.spectrumReferenceLevelPtr = &spectrumReferenceLevel;
   parameters.iqDumpPtr = &iqDump;
 
   // Retrieve the system parameters.
@@ -192,8 +210,12 @@ int main(int argc,char **argv)
     return (0);
   } // if
 
+  fprintf(stderr,"reference level: %d\n",spectrumReferenceLevel);
+
   // Instantiate signal analyzer.
-  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,sampleRate,10);
+  analyzerPtr = new SignalAnalyzer((DisplayType)displayType,
+                                   sampleRate,
+                                   spectrumReferenceLevel);
 
   // Reference the input buffer in 8-bit signed context.
   signedBufferPtr = (int8_t *)inputBuffer;
