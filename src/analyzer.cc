@@ -210,8 +210,6 @@ int main(int argc,char **argv)
     return (0);
   } // if
 
-  fprintf(stderr,"reference level: %d\n",spectrumReferenceLevel);
-
   // Instantiate signal analyzer.
   analyzerPtr = new SignalAnalyzer((DisplayType)displayType,
                                    sampleRate,
