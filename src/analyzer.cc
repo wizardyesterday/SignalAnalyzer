@@ -168,7 +168,7 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
                 " 3 - lissajous]\n"
                 "           -r samplerate (S/s) \n"
                 "           -R spectrumreferencelevel (dB)\n"
-                "           -V Vertical gain f signal to display\n"
+                "           -V Vertical gain of signal to display\n"
                 "           -U (unsigned samples)\n"
                 "           -D (dump raw IQ) < inputFile\n");
 
