@@ -11,8 +11,8 @@
 //
 // To run this program type,
 // 
-//    ./analyzer -d <displaytype> -r <sampleRate> -R <referenceLevel
-//               -U -D < inputFile
+//    ./analyzer -d <displaytype> -r <sampleRate> -V <verticalgain>
+//              -R <referenceLevel -U -D < inputFile
 //
 // where,
 //
@@ -20,6 +20,11 @@
 //    1 - Magnitude display.
 //    2 - Power spectrum display.
 //    3 - Lissajous display.
+//
+//    he R flag sets the reference level on the spectrum analyzer display.
+//
+//    The V flag sets the vertical gain of the signal yo be displayed on
+//    the spectrum analyzer display.
 //
 //    The U flag indicates that the IQ samples are unsigned 8-bit
 //    quantities rather than the default signed values.  This allows
@@ -49,6 +54,7 @@ struct MyParameters
 {
   int *displayTypePtr;
   float *sampleRatePtr;
+  float *verticalGainPtr;
   int32_t *spectrumReferenceLevelPtr;
   bool *unsignedSamplesPtr;
   bool *iqDumpPtr;
@@ -93,6 +99,9 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   // Default to 256000S/s.
   *parameters.sampleRatePtr = 256000;
 
+  // Default to no amplification.
+  *parameters.verticalGainPtr = 1;
+
   // Default to 0dB reference level.
   *parameters.spectrumReferenceLevelPtr = 0;
 
@@ -112,7 +121,7 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
   while (!done)
   {
     // Retrieve the next option.
-    opt = getopt(argc,argv,"d:r:R:UDh");
+    opt = getopt(argc,argv,"d:r:V:R:UDh");
 
     switch (opt)
     {
@@ -125,6 +134,12 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
       case 'r':
       {
         *parameters.sampleRatePtr = atof(optarg);
+        break;
+      } // case
+
+      case 'V':
+      {
+        *parameters.verticalGainPtr = atof(optarg);
         break;
       } // case
 
@@ -153,6 +168,7 @@ bool getUserArguments(int argc,char **argv,struct MyParameters parameters)
                 " 3 - lissajous]\n"
                 "           -r samplerate (S/s) \n"
                 "           -R spectrumreferencelevel (dB)\n"
+                "           -V Vertical gain f signal to display\n"
                 "           -U (unsigned samples)\n"
                 "           -D (dump raw IQ) < inputFile\n");
 
@@ -190,6 +206,7 @@ int main(int argc,char **argv)
   int displayType;
   float sampleRate;
   bool unsignedSamples;
+  float verticalGain;
   int32_t spectrumReferenceLevel;
   bool iqDump;
   struct MyParameters parameters;
@@ -198,6 +215,7 @@ int main(int argc,char **argv)
   parameters.displayTypePtr = &displayType;
   parameters.sampleRatePtr = &sampleRate;
   parameters.unsignedSamplesPtr = &unsignedSamples;
+  parameters.verticalGainPtr = &verticalGain;
   parameters.spectrumReferenceLevelPtr = &spectrumReferenceLevel;
   parameters.iqDumpPtr = &iqDump;
 
@@ -213,6 +231,7 @@ int main(int argc,char **argv)
   // Instantiate signal analyzer.
   analyzerPtr = new SignalAnalyzer((DisplayType)displayType,
                                    sampleRate,
+                                   verticalGain,
                                    spectrumReferenceLevel);
 
   // Reference the input buffer in 8-bit signed context.

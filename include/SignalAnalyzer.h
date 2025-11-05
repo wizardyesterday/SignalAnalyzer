@@ -30,7 +30,11 @@ class SignalAnalyzer
 
   public:
 
-  SignalAnalyzer(DisplayType displayType,float sampleRate,int32_t baselineInDb);
+  SignalAnalyzer(DisplayType displayType,
+      float sampleRate,
+      float verticalGain,
+      int32_t baselineInDb);
+
  ~SignalAnalyzer(void);
 
   void plotSignalMagnitude(int8_t *signalBufferPtr,uint32_t bufferLength);
@@ -77,6 +81,7 @@ class SignalAnalyzer
 
   uint32_t spectrumStride;
   uint32_t signalStride;
+  float verticalGain;
   int32_t baselineInDb;
   //_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
 

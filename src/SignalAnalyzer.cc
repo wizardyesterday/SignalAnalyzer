@@ -54,7 +54,10 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
   Purpose: The purpose of this function is to serve as the constructor for
   an instance of an SignalAnalyzer.
 
-  Calling Sequence: SignalAnalyzer(displayTypesampleRate,baselineInDb))
+  Calling Sequence: SignalAnalyzer(displayType,
+                                   sampleRate,
+                                   verticalGain,
+                                   baselineInDb)
  
   Inputs:
 
@@ -62,6 +65,12 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
 
     sampleRate - The sample rate of incoming IQ data in units of S/s.
     
+    verticalGain - The vertical gain of the display.  For example, if
+    the vertical gain is qual to 1, the spectrum display vertical grid
+    has a separation of 20dB. If it has a value of 2, the vertical grid
+    spacing is 10dB. If it has a value 0f 0.25, the vertical grid spacing
+    is 40dB.
+
     baselineInDb - The spectrum analyzer reference level in decibels.
 
  Outputs:
@@ -69,12 +78,15 @@ static int XErrorCallback(Display *displayPtr,XErrorEvent *errorPtr)
     None.
 
 *****************************************************************************/
-SignalAnalyzer::SignalAnalyzer(
-  DisplayType displayType,
+SignalAnalyzer::SignalAnalyzer(DisplayType displayType,
   float sampleRate,
+  float verticalGain,
   int32_t baselineInDb)
 {
   uint32_t i;
+
+  // This expands or contracts the magnitude od a spectrum display.
+  this->verticalGain = verticalGain;
 
   // Spectrum display baseline.
   this->baselineInDb = baselineInDb;
@@ -938,7 +950,10 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
     // Set the baseline to the reference level..
     powerInDb += baselineInDb;
 
-    // Scale to display 20dB per division.
+    // "Amplidy" the signal.
+    powerInDb *= verticalGain;
+
+    // Scale to display 20dB, divided by the vertical gain, per division.
     powerInDb *= 3.2;
 
     //--------------------------------------------
