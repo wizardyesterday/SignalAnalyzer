@@ -859,8 +859,6 @@ uint32_t SignalAnalyzer::computeSignalMagnitude(
     magnitudeIndex++;
   } // for
 
-  // Swap the array halfs.
-
   return (bufferLength / 2);
 
 } // computeSignalMagnitude
