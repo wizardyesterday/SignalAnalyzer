@@ -667,7 +667,7 @@ void SignalAnalyzer::plotPowerSpectrum(
   uint32_t i;
   uint32_t j;
 
-  bufferLength = computePowerSpectrum(signalBufferPtr,bufferLength);
+  bufferLength = computeLogPowerSpectrum(signalBufferPtr,bufferLength);
 
   // Reference the start of the points array.
   j = 0;
@@ -865,12 +865,12 @@ uint32_t SignalAnalyzer::computeSignalMagnitude(
 
 /*****************************************************************************
 
-  Name: computePowerSpectrum
+  Name: computeLogPowerSpectrum
 
   Purpose: The purpose of this function is to compute the power spectrum
   of IQ data.
 
-  Calling Sequence: computePowerSpectrum(signalBufferPtr,bufferLength)
+  Calling Sequence: computeLogPowerSpectrum(signalBufferPtr,bufferLength)
 
   Inputs:
 
@@ -886,7 +886,7 @@ uint32_t SignalAnalyzer::computeSignalMagnitude(
     None.
 
 *****************************************************************************/
-uint32_t SignalAnalyzer::computePowerSpectrum(
+uint32_t SignalAnalyzer::computeLogPowerSpectrum(
   int8_t *signalBufferPtr,
   uint32_t bufferLength)
 {
@@ -972,6 +972,6 @@ uint32_t SignalAnalyzer::computePowerSpectrum(
 
   return (bufferLength / 2);
 
-} // computePowerSpectrum
+} // computeLogPowerSpectrum
 
 

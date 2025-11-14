@@ -54,8 +54,8 @@ class SignalAnalyzer
   uint32_t computeSignalMagnitude(int8_t *signalBufferPtr,
                                   uint32_t bufferLength);
 
-  uint32_t computePowerSpectrum(int8_t *signalBufferPtr,
-                                uint32_t bufferLength);
+  uint32_t computeLogPowerSpectrum(int8_t *signalBufferPtr,
+                                   uint32_t bufferLength);
 
   //*******************************************************************
   // Attributes.
